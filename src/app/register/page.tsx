@@ -45,8 +45,9 @@ const RegisterPage = () => {
 
       const result = await response.json();
       console.log("Server Response:", result);
-
-      setSuccess("Registration successful!");
+      window.location.href = "/";
+      alert("Registration successful!");
+      setSuccess("Registration successful!"); 
       setErrorMsg("");
     } catch (err: any) {
       console.error("Registration Error:", err.message);
