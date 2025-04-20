@@ -1,39 +1,102 @@
-import { NextResponse } from "next/server";
+// middleware.ts
+import { NextResponse, type NextRequest } from "next/server";
+import { default as nextAuthMiddleware } from "next-auth/middleware";
 
-export { default } from "next-auth/middleware";
+// Define role types for better type safety
+type UserRole = "admin" | "landlord" | "tenant";
 
-export const config = { matcher: ["/login", "/register"] };
+interface DecodedToken {
+  role: UserRole;
+  exp?: number;
+  [key: string]: any;
+}
 
-export function middleware(req: any) { 
-  const token = req.cookies.get("token")?.value 
-  console.log(token, "token");
+export default nextAuthMiddleware;
 
-  if (!token) { 
-    return NextResponse.redirect(new URL("/login", req.url));
+export const config = {
+  matcher: [ 
+    "/login",
+    "/register",
+    "/unauthorized"
+  ]
+};
+
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const token = req.cookies.get("token")?.value;
+
+  // Public routes that don't require authentication
+  const publicRoutes = ["/login", "/register", "/unauthorized"];
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
   }
 
-  let userRole: string;
+  // If no token and trying to access protected route
+  if (!token) {
+    return redirectToLogin(req, pathname);
+  }
+
+  let decodedToken: DecodedToken;
   try {
-    userRole = JSON.parse(atob(token.split(".")[1])).role;
-    console.log(userRole, "userRole");
+    decodedToken = decodeAndVerifyToken(token);
+    
+    // Check token expiration
+    if (isTokenExpired(decodedToken)) {
+      return redirectToLogin(req, pathname, "Session expired. Please login again.");
+    }
   } catch (error) {
-    console.error("Invalid token. Redirecting to /login.", error);
-    return NextResponse.redirect(new URL("/login", req.url));
+    console.error("Token verification failed:", error);
+    return redirectToLogin(req, pathname, "Invalid session. Please login again.");
   }
 
-  if (req.nextUrl.pathname.startsWith("/dashboard/admin") && userRole !== "admin") {
-    console.log("Unauthorized access attempt to admin dashboard.");
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
- 
+  // Handle root dashboard redirect
+  if (pathname === "/dashboard") {
+    return redirectToRoleDashboard(decodedToken.role, req);
   }
 
-  if (req.nextUrl.pathname.startsWith("/dashboard/landlord") && userRole !== "landlord") {
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
-  }
-
-  if (req.nextUrl.pathname.startsWith("/dashboard/tenants") && userRole !== "tenants") {
+  // Check route permissions
+  if (!hasRouteAccess(decodedToken.role, pathname)) {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
 
   return NextResponse.next();
+}
+
+// Helper functions
+function decodeAndVerifyToken(token: string): DecodedToken {
+  // In production, you should verify the token signature
+  // This is just decoding for demonstration
+  const base64Payload = token.split('.')[1];
+  const payload = Buffer.from(base64Payload, 'base64').toString();
+  return JSON.parse(payload);
+}
+
+function isTokenExpired(token: DecodedToken): boolean {
+  if (!token.exp) return false;
+  return Date.now() >= token.exp * 1000;
+}
+
+function hasRouteAccess(role: UserRole, pathname: string): boolean {
+  const roleRoutes: Record<UserRole, string[]> = {
+    admin: ['/dashboard/admin', '/dashboard/admin/:path*'],
+    landlord: ['/dashboard/landlord', '/dashboard/landlord/:path*'],
+    tenant: ['/dashboard/tenant', '/dashboard/tenant/:path*']
+  };
+
+  return roleRoutes[role].some(route => {
+    const routePattern = new RegExp(`^${route.replace(':path*', '.*')}$`);
+    return routePattern.test(pathname);
+  });
+}
+
+function redirectToLogin(req: NextRequest, originalPath: string, message?: string) {
+  const loginUrl = new URL('/login', req.url);
+  loginUrl.searchParams.set('callback', originalPath);
+  if (message) loginUrl.searchParams.set('error', encodeURIComponent(message));
+  return NextResponse.redirect(loginUrl);
+}
+
+function redirectToRoleDashboard(role: UserRole, req: NextRequest) {
+  const dashboardUrl = new URL(`/dashboard/${role}`, req.url);
+  return NextResponse.redirect(dashboardUrl);
 }
