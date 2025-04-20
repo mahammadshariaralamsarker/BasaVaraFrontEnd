@@ -1,7 +1,11 @@
-import React from 'react'
-
-export default function page() {
+import HomePageManage from "@/components/modules/Home";
+ 
+const HomePage =  () => {
   return (
-    <div>Tenant home Page</div>
-  )
-}
+    <div>
+      <HomePageManage/>
+    </div>
+  );
+};
+
+export default HomePage;

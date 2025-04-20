@@ -27,11 +27,10 @@ const LoginPage = () => {
 
       const result = await response.json(); 
 
-      if (result.status === true) {          
-        // Store the token in cookies
-        document.cookie = `token=${result.data.token}; path=/;`;
-        // redirect to another page
-         window.location.href = "/";  
+      if (result.status === true) {    
+        const { token } = result.data; 
+        document.cookie = `token=${token}`;  
+        window.location.href = "/";
       } else {
         console.error("Login failed:", response.statusText);
       }
