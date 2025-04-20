@@ -1,6 +1,6 @@
 "use server";
 
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
 
@@ -37,12 +37,13 @@ export const loginUser = async (userData: FieldValues) => {
     });
 
     const result = await res.json();
-
-    if (result?.success) {
+    console.log(result);
+    
+    if (result?.status) {
       (await cookies()).set("token", result?.data?.token);
       (await cookies()).set("refreshToken", result?.data?.refreshToken);
-
-      console.log("Login successful, tokens set.");
+    } else {
+      console.error("Login failed:", result?.message);
     }
 
     return result;
@@ -57,16 +58,15 @@ export const getCurrentUser = async () => {
 
   if (token) {
     decodedData = await jwtDecode(token);
+    console.log(decodedData);
     return decodedData;
   } else {
     return null;
   }
 };
-
- 
-
 export const logout = async () => {
   (await cookies()).delete("token");
+  (await cookies()).delete("refresh-token");
 };
 
 export const getNewToken = async () => {

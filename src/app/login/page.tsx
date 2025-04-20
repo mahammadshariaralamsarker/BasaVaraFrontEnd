@@ -18,8 +18,8 @@ const LoginPage = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const res = await loginUser(data); 
-      if (res?.success) {
+      const res = await loginUser(data);  
+      if (res?.status) {
         alert("Login successful!");
       } else {
         alert("Login failed. Please try again.");

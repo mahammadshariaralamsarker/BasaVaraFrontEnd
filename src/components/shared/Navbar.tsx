@@ -1,33 +1,19 @@
-// app/components/Navbar.tsx
 'use client';
 
+import { useUser } from "@/context/UserContext";
+import { logout } from "@/lib/services/AuthService";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 
-const Navbar = ({ token }: { token?: string }) => {
-  let isTenant = false;
-  let isAdmin = false;
-  let isLandlord = false;
-
-  try {
-    if (token) {
-      const decoded = JSON.parse(atob(token.split('.')[1]));
-      isTenant = decoded.role === 'tenant';
-      isAdmin = decoded.role === 'admin';
-      isLandlord = decoded.role === 'landlord';
-    }
-  } catch (e) {
-    console.error("Invalid token", e);
-  }
-
+const Navbar = () => {
+  const user = useUser(); 
+ 
   const menuItems = (
     <>
       <li className="hover:text-gray-600"><Link href="/">Home</Link></li>
       <li className="hover:text-gray-600"><Link href="/about">About Us</Link></li>
       <li className="hover:text-gray-600"><Link href="/support">Support</Link></li>
-      {!isTenant && (
-        <li className="hover:text-gray-600"><Link href="/dashboard">Dashboard</Link></li>
-      )}
+      <li className="hover:text-gray-600"><Link href="/dashboard">Dashboard</Link></li>
     </>
   );
 
@@ -53,19 +39,25 @@ const Navbar = ({ token }: { token?: string }) => {
         </Link>
       </div>
 
+      {/* Desktop menu */}
       <div className="hidden lg:flex">
         <ul className="flex space-x-6 text-gray-800">{menuItems}</ul>
       </div>
 
+      {/* Login/Logout Button */}
       <div className="flex items-center">
-        {token ? (
-          <button onClick={() => signOut()}
-            className="border border-red-500 text-red-500 px-5 py-2 rounded-full hover:bg-red-500 hover:text-black transition duration-200">
+        {user ? (
+          <button
+            onClick={() => logout()}
+            className="border border-red-500 text-red-500 px-5 py-2 rounded-full hover:bg-red-500 hover:text-black transition duration-200"
+          >
             Logout
           </button>
         ) : (
-          <Link href="/login"
-            className="border border-teal-500 text-teal-500 px-5 py-2 rounded-full hover:bg-teal-500 hover:text-black transition duration-200">
+          <Link
+            href="/login"
+            className="border border-teal-500 text-teal-500 px-5 py-2 rounded-full hover:bg-teal-500 hover:text-black transition duration-200"
+          >
             Login
           </Link>
         )}
