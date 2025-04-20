@@ -65,8 +65,10 @@ export const getCurrentUser = async () => {
   }
 };
 export const logout = async () => {
+  
   (await cookies()).delete("token");
   (await cookies()).delete("refresh-token");
+  
 };
 
 export const getNewToken = async () => {

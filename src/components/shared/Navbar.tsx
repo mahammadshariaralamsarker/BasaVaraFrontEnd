@@ -2,24 +2,34 @@
 
 import { useUser } from "@/context/UserContext";
 import { logout } from "@/lib/services/AuthService";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
-  const user = useUser(); 
+  const user = useUser();  
+  const navigate = useRouter();
+  
+  const handleLogout = async () => {
+    await logout();
+    user.setUser(null);
+    navigate.push("/login");
+  };
+  const dashboard = async () => {
+    navigate.push(`/${user?.user?.role}`);
+  };
  
   const menuItems = (
     <>
       <li className="hover:text-gray-600"><Link href="/">Home</Link></li>
       <li className="hover:text-gray-600"><Link href="/about">About Us</Link></li>
       <li className="hover:text-gray-600"><Link href="/support">Support</Link></li>
-      <li className="hover:text-gray-600"><Link href="/dashboard">Dashboard</Link></li>
+      <li  onClick={dashboard} className="hover:text-gray-600"><Link href="/dashboard">Dashboard</Link></li>
     </>
   );
 
   return (
     <div className="w-[90%] mx-auto flex items-center justify-between bg-white border-b py-4">
-      {/* Logo & menu */}
+      {/* Logo & Mobile Menu */}
       <div className="flex items-center">
         <div className="relative lg:hidden">
           {/* Mobile dropdown */}
@@ -33,7 +43,7 @@ const Navbar = () => {
             {menuItems}
           </ul>
         </div>
-
+    
         <Link href="/" className="ml-4 text-xl font-semibold text-gray-800 hover:text-gray-600">
           NextAuth
         </Link>
@@ -44,11 +54,12 @@ const Navbar = () => {
         <ul className="flex space-x-6 text-gray-800">{menuItems}</ul>
       </div>
 
-      {/* Login/Logout Button */}
+      {/* Login / Logout button */}
+      <h1>{user?.user?.email}</h1>
       <div className="flex items-center">
-        {user ? (
+        {user?.user?.email ? (
           <button
-            onClick={() => logout()}
+            onClick={handleLogout} 
             className="border border-red-500 text-red-500 px-5 py-2 rounded-full hover:bg-red-500 hover:text-black transition duration-200"
           >
             Logout

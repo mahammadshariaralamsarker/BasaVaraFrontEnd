@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import Link from "next/link"; 
 import { loginUser } from "@/lib/services/AuthService";
+import { redirect } from "next/dist/server/api-utils";
 
 type FormValues = {
   email: string;
@@ -21,6 +22,7 @@ const LoginPage = () => {
       const res = await loginUser(data);  
       if (res?.status) {
         alert("Login successful!");
+        window.location.href = "/dashboard"; // Redirect to dashboard after successful login
       } else {
         alert("Login failed. Please try again.");
       }

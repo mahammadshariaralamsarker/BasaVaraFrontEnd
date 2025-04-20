@@ -29,7 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Home, Building2, ClipboardList, Users, Settings, LogOut, User, ChevronDown } from "lucide-react"
+import { Home, Building2, ClipboardList, Settings, LogOut, User, ChevronDown } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 
 export default function DashboardLayout({
