@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import {
@@ -75,12 +74,6 @@ export default function DashboardLayout({
       href: "/landlord/requests",
       isActive: pathname.startsWith("/landlord/requests"),
     },
-    // {
-    //   title: "Tenants",
-    //   icon: Users,
-    //   href: "/landlord/tenants",
-    //   isActive: pathname.startsWith("/landlord/tenants"),
-    // },
   ]
 
   const settings = [

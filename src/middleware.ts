@@ -6,15 +6,15 @@ type Role = keyof typeof roleBasedPrivateRoutes;
 const authRoutes = ["/login", "/register"];
 
 const roleBasedPrivateRoutes = {
-  user: [/^\/user/, /^\/create-shop/],
+  tenant: [/^\/tenant/, /^\/create-shop/],
   admin: [/^\/admin/],
+  landlord: [/^\/landlord/],
 };
 
 export const middleware = async (request: NextRequest) => {
-  const { pathname } = request.nextUrl;
-  console.log(pathname);
+  const { pathname } = request.nextUrl; 
 
-  const userInfo = await getCurrentUser();
+  const userInfo = await getCurrentUser(); 
 
   if (!userInfo) {
     if (authRoutes.includes(pathname)) {
@@ -50,7 +50,7 @@ export const config = {
     "/dashboard",
     "/admin",
     "/admin/:page",
-    "/user",
-    "/user/:page",
+    "/tenant/:page",
+    "/tenant/:page",
   ],
 };
