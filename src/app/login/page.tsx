@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import Link from "next/link"; 
+import { loginUser } from "@/lib/services/AuthService";
 
 type FormValues = {
   email: string;
@@ -17,25 +18,15 @@ const LoginPage = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json(); 
-
-      if (result.status === true) {    
-        const { token } = result.data; 
-        document.cookie = `token=${token}`;  
-        window.location.href = "/";
+      const res = await loginUser(data); 
+      if (res?.success) {
+        alert("Login successful!");
       } else {
-        console.error("Login failed:", response.statusText);
+        alert("Login failed. Please try again.");
       }
-    } catch (error) {
-      console.error("Error during login:", error);
+       
+    } catch (err: any) {
+      console.error(err);
     }
   };
 
