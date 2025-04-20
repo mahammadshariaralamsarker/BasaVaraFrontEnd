@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function page() {
   return (
-    <div>Tenants Dashboard Home Page</div>
+    <div>landlords listing page</div>
   )
 }

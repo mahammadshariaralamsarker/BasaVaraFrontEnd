@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import Link from "next/link";
+import Link from "next/link"; 
 
 type FormValues = {
   email: string;
@@ -28,8 +28,8 @@ const LoginPage = () => {
       const result = await response.json(); 
 
       if (result.status === true) {          
-        // Store the token in localStorage
-        localStorage.setItem("token", result.data.token);  
+        // Store the token in cookies
+        document.cookie = `token=${result.data.token}; path=/;`;
         // redirect to another page
          window.location.href = "/";  
       } else {

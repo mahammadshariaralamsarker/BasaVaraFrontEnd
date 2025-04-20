@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function layout() {
   return (
-    <div>Tenants layout</div>
+    <div>Tenant Layout page</div>
   )
 }
