@@ -1,10 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit' 
-import adminSlice from './features/adminSlice'
+// import adminSlice from './features/adminSlice'
+import { adminApi } from './apis/admin.slice'
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      admin: adminSlice,  
+      // admin: adminSlice,  
+      [adminApi.reducerPath]: adminApi.reducer,
     },
+    middleware: (getDefaultMiddleware) => 
+      getDefaultMiddleware().concat(adminApi.middleware),
   })
 }
 

@@ -7,11 +7,11 @@ const AdminSidebar = () => {
       <ul className="space-y-4">
         <li>
           <Link
-            href="/dashboard"
+            href="/admin/listing"
             className="flex items-center space-x-2 p-3 rounded-md hover:bg-gray-200 text-gray-700"
           >
             <FaHome className="h-5 w-5" />
-            <span>Dashboard</span>
+            <span>All Landlord</span>
           </Link>
         </li>
         <li>
