@@ -22,7 +22,7 @@ const LoginPage = () => {
       const res = await loginUser(data);  
       if (res?.status) {
         alert("Login successful!");
-        window.location.href = "/dashboard"; // Redirect to dashboard after successful login
+        window.location.href = "/dashboard"; 
       } else {
         alert("Login failed. Please try again.");
       }
