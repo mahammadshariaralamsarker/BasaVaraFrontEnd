@@ -6,15 +6,15 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+// Removed duplicate UserData definition
 export type UserData = {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
   role: "tenant" | "landlord";
-  phone: number;
+  phone: string;
 };
-
 const RegisterPage = () => {
   const {
     register,
@@ -28,7 +28,7 @@ const RegisterPage = () => {
 
   const onSubmit = async (data: UserData) => {
     const { confirmPassword, ...userData } = data;
-
+    console.log(data);
     try {
       const response = await fetch("http://localhost:5000/auth/register", {
         method: "POST",
@@ -45,8 +45,8 @@ const RegisterPage = () => {
 
       const result = await response.json();
       console.log("Server Response:", result);
-      window.location.href = "/";
       alert("Registration successful!");
+      window.location.href = "/";
       setSuccess("Registration successful!"); 
       setErrorMsg("");
     } catch (err: any) {
