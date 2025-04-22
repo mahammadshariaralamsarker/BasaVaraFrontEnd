@@ -45,8 +45,8 @@ export default function HomeSlider() {
           }`}
         >
           <Image
-            width={1000}
-            height={700}
+            width={1920}
+            height={1080}
             src={slide.img}
             alt={slide.title}
             className="w-full h-full object-cover brightness-75"

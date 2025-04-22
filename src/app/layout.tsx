@@ -19,7 +19,7 @@ export default function RootLayout({
       <html lang="en" data-theme="light">
         <body>
           <Navbar />
-          <div className="min-h-screen w-[90%] mx-auto">{children}</div>
+          <div className="min-h-screen w-full mx-auto">{children}</div>
         </body>
       </html>
     </Providers>

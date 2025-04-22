@@ -44,7 +44,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="px-6 py-24 max-w-7xl mx-auto">
+    <section className="w-[90%] px-6 py-24 max-w-7xl mx-auto">
       {/* Hero Header */}
       <div className="text-center mb-10">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
@@ -111,8 +111,8 @@ export default function HeroSection() {
             <Image
               src={house.image}
               alt="House"
-              width={1000}
-              height={192}
+              width={600}
+              height={400}
               className="w-full h-48 object-cover"
             />
             <div className="p-4">
