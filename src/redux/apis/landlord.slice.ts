@@ -18,6 +18,7 @@ export const landlordApi = createApi({
   reducerPath: "landlordApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5000",
+    // credentials:'include'
   }),
   tagTypes: ["Product"],
   endpoints: (builder) => ({
@@ -51,7 +52,7 @@ export const landlordApi = createApi({
 
     deleteListing: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/landlords/listings/${id}`,
+        url: `/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Product"],

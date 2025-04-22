@@ -38,7 +38,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   const property = data?.data ?? {}
   const [deleteProperty, { isLoading: isDeleting }] = useDeleteListingMutation()
 
- console.log(property);
+//  console.log(property);
   const handleDelete = async () => {
     try {
       await deleteProperty(params.id).unwrap()

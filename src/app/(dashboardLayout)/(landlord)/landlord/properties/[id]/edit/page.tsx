@@ -124,6 +124,9 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
       router.push(`/landlord/properties/${params.id}`)
     }, 1500)
   }
+  
+
+
 
   if (isLoading) {
     return (
