@@ -12,7 +12,7 @@ export type UserData = {
   password: string;
   confirmPassword: string;
   role: "tenant" | "landlord";
-  phone: number;
+  phone: string;
 };
 
 const RegisterPage = () => {
@@ -47,7 +47,7 @@ const RegisterPage = () => {
       console.log("Server Response:", result);
       window.location.href = "/";
       alert("Registration successful!");
-      setSuccess("Registration successful!"); 
+      setSuccess("Registration successful!");
       setErrorMsg("");
     } catch (err: any) {
       console.error("Registration Error:", err.message);
@@ -146,7 +146,7 @@ const RegisterPage = () => {
                 type="number"
                 {...register("phone", {
                   required: "Phone is required",
-                  valueAsNumber: true,
+                  // valueAsNumber: true,
                 })}
                 placeholder="Phone"
                 className="w-full p-3 border border-gray-300 rounded"
@@ -207,9 +207,7 @@ const RegisterPage = () => {
             </div>
 
             {/* Messages */}
-            {success && (
-              <p className="text-green-600 text-center">{success}</p>
-            )}
+            {success && <p className="text-green-600 text-center">{success}</p>}
             {errorMsg && <p className="text-red-600 text-center">{errorMsg}</p>}
 
             {/* Redirect to Login */}

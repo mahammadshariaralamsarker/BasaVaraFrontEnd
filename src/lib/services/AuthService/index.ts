@@ -37,10 +37,15 @@ export const loginUser = async (userData: FieldValues) => {
     });
 
     const result = await res.json();
-    
+    console.log("Login response:", result); // 👈 add this to inspect
+
     if (result?.status) {
       (await cookies()).set("token", result?.data?.token);
       (await cookies()).set("refreshToken", result?.data?.refreshToken);
+
+      // //aigulo mohi set korse
+      // localStorage.setItem("accessToken", result?.data?.token); // ✅ set token
+      // localStorage.setItem("refreshToken", result?.data?.refreshToken);
     } else {
       console.error("Login failed:", result?.message);
     }
@@ -64,10 +69,8 @@ export const getCurrentUser = async () => {
   }
 };
 export const logout = async () => {
-  
   (await cookies()).delete("token");
   (await cookies()).delete("refresh-token");
-  
 };
 
 export const getNewToken = async () => {

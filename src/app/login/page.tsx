@@ -1,9 +1,8 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import Link from "next/link"; 
+import Link from "next/link";
 import { loginUser } from "@/lib/services/AuthService";
-import { redirect } from "next/dist/server/api-utils";
 
 type FormValues = {
   email: string;
@@ -19,14 +18,13 @@ const LoginPage = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const res = await loginUser(data);  
+      const res = await loginUser(data);
       if (res?.status) {
         alert("Login successful!");
-        window.location.href = "/dashboard"; 
+        window.location.href = "/dashboard";
       } else {
         alert("Login failed. Please try again.");
       }
-       
     } catch (err: any) {
       console.error(err);
     }

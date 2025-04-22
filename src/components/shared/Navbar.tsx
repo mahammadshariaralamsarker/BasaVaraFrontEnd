@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useUser } from '@/context/UserContext';
-import { logout } from '@/lib/services/AuthService';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useUser } from "@/context/UserContext";
+import { logout } from "@/lib/services/AuthService";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const user = useUser();
@@ -12,7 +12,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     await logout();
     user.setUser(null);
-    navigate.push('/login');
+    navigate.push("/login");
   };
   const dashboard = async () => {
     navigate.push(`/${user?.user?.role}`);
@@ -22,6 +22,9 @@ const Navbar = () => {
     <>
       <li className="hover:text-gray-600">
         <Link href="/">Home</Link>
+      </li>
+      <li className="hover:text-gray-600">
+        <Link href="/tenants">Tenants</Link>
       </li>
       <li className="hover:text-gray-600">
         <Link href="/about">About Us</Link>
