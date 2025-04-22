@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bed, Bath, SquareIcon as SquareFeet } from "lucide-react"
+import Link from "next/link"
 
 // Mock properties data
 const properties = [
@@ -70,7 +71,7 @@ export default function PropertyList({ limit = 10 }: { limit?: number }) {
       {displayProperties.map((property) => (
         <Card key={property.id} className="overflow-hidden">
           <CardContent className="p-0">
-            <a href={`/dashboard/properties/${property.id}`} className="flex flex-col md:flex-row">
+            <Link href={`/dashboard/properties/${property.id}`} className="flex flex-col md:flex-row">
               <div className="relative h-48 w-full md:h-auto md:w-48">
                 <Image src={property.image || "/placeholder.svg"} alt={property.title} fill className="object-cover" />
               </div>
@@ -110,7 +111,7 @@ export default function PropertyList({ limit = 10 }: { limit?: number }) {
                   <p className="font-bold text-lg">${property.price}/month</p>
                 </div>
               </div>
-            </a>
+            </Link>
           </CardContent>
         </Card>
       ))}
