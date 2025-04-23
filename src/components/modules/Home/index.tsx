@@ -13,7 +13,6 @@ export default function index() {
       {/* <p>Welcome to the Home Page!</p>
       <p>banner</p>
       <p>customer review</p> */}
-      <Footer />
     </div>
   );
 }
