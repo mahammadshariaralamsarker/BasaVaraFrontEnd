@@ -28,6 +28,15 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ['Listings'] 
     }),
+    updateListingByAdmin: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/admin/listings/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['Listings'],
+    }),
+
   }),
 });
 
@@ -35,5 +44,6 @@ export const {
   useGetAllListingsQuery,
   useGetAllUsersQuery,
   useDeleteUserByAdminMutation,
-  useDeleteListingByAdminMutation
+  useDeleteListingByAdminMutation,
+  useUpdateListingByAdminMutation,
 } = adminApi;

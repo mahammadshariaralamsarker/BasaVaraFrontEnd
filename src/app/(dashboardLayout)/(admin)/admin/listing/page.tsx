@@ -11,7 +11,7 @@ export default function Page() {
   if (isLoading) return <div className="text-center py-8">Loading listings...</div>
   if (error) return <div className="text-center py-8 text-red-500">Error loading listings</div>
   if (!data?.data?.length) return <div className="text-center py-8">No listings available</div>
-  
+  console.log(data.data);
   const handleDeleteListing = (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this Landlord?"
@@ -42,7 +42,7 @@ export default function Page() {
               <tr key={listing._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Image
-                    src={listing.imageUrls || '/placeholder.jpg'}
+                    src={listing.imageUrls[0] || '/placeholder.jpg'}
                     alt="Property"
                     className="border-2 border-gray-300 rounded-lg"
                     width={64}
