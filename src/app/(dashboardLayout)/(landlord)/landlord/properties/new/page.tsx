@@ -86,12 +86,11 @@ export default function NewPropertyPage() {
   // }
 
 
-  useEffect(() => {
-    console.log(images);
-  }, [images]);
+  
   async function onSubmit(values) {
 
-  
+    console.log(values)
+      console.log(images);;
     try {
       const res = await fetch("http://localhost:5000/landlords/listings", {
         method: "POST",
