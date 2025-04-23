@@ -22,8 +22,8 @@ const formSchema = z.object({
   location: z.string().min(3, {
     message: "Location must be at least 3 characters.",
   }),
-  price: z.coerce.number().positive({
-    message: "Price must be a positive number.",
+  rent: z.coerce.number().positive({
+    message: "rent must be a positive number.",
   }),
   bedrooms: z.coerce.number().int().positive({
     message: "Bedrooms must be a positive integer.",
@@ -34,7 +34,7 @@ const formSchema = z.object({
   area: z.coerce.number().positive({
     message: "Area must be a positive number.",
   }),
-  status: z.enum(["Available", "Rented", "Pending"]),
+  houseStatus: z.enum(["Available", "Rented", "Pending"]),
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   }),
@@ -57,11 +57,11 @@ const mockProperty = {
   id: "1",
   title: "Modern Downtown Apartment",
   location: "123 Main St, New York, NY 10001",
-  price: 2500,
+  rent: 2500,
   bedrooms: 2,
   bathrooms: 2,
   area: 1200,
-  status: "Available",
+  houseStatus: "Available",
   description:
     "A beautiful modern apartment in the heart of downtown. This recently renovated unit features hardwood floors, stainless steel appliances, and a spacious living area. The building includes a fitness center, rooftop terrace, and 24-hour doorman.",
   amenities: ["parking", "gym", "ac", "security", "laundry"],
@@ -78,11 +78,11 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
     defaultValues: {
       title: "",
       location: "",
-      price: undefined,
+      rent: undefined,
       bedrooms: undefined,
       bathrooms: undefined,
       area: undefined,
-      status: "Available",
+      houseStatus: "Available",
       description: "",
       amenities: [],
     },
@@ -96,11 +96,11 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
       form.reset({
         title: mockProperty.title,
         location: mockProperty.location,
-        price: mockProperty.price,
+        rent: mockProperty.rent,
         bedrooms: mockProperty.bedrooms,
         bathrooms: mockProperty.bathrooms,
         area: mockProperty.area,
-        status: mockProperty.status as "Available" | "Rented" | "Pending",
+        houseStatus: mockProperty.houseStatus as "Available" | "Rented" | "Pending",
         description: mockProperty.description,
         amenities: mockProperty.amenities,
       })
@@ -194,7 +194,7 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
                 />
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="rent"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Monthly Rent ($)</FormLabel>
@@ -207,7 +207,7 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
                 />
                 <FormField
                   control={form.control}
-                  name="status"
+                  name="houseStatus"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Status</FormLabel>
@@ -281,7 +281,7 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
                     )}
                   />
                 </div>
-                <div className="md:col-span-2">
+                {/* <div className="md:col-span-2">
                   <FormField
                     control={form.control}
                     name="amenities"
@@ -321,8 +321,8 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
                       </FormItem>
                     )}
                   />
-                </div>
-                <div className="md:col-span-2">
+                </div> */}
+                {/* <div className="md:col-span-2">
                   <FormLabel>Property Images</FormLabel>
                   <FormDescription className="mb-4">
                     Upload images of your property. You can upload multiple images.
@@ -337,7 +337,7 @@ export default function EditPropertyPage({ params }: { params: { id: string } })
                       </Button>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               <CardFooter className="flex justify-end gap-2 px-0">

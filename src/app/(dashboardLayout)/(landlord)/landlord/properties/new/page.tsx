@@ -98,7 +98,7 @@ export default function NewPropertyPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          data: values, // ✅ wrap values in a `data` key
+          data: values, 
         }),
       })
   
