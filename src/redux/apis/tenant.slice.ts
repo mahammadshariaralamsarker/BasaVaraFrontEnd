@@ -1,29 +1,24 @@
 // redux/apis/tenant.slice.ts
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: "http://localhost:5000",
-  prepareHeaders: (headers) => {
-    const token = localStorage.getItem("token");
-    console.log("Token from localStorage:", token);
-    if (token) {
-      headers.set("Authorization", token); // ✅ Add "Bearer " prefix
-    }
-    return headers;
-  },
-});
+import { baseApi } from "./baseApi";
 
-export const tenantApi = createApi({
-  reducerPath: "tenantApi",
-  baseQuery: baseQueryWithAuth,
-  tagTypes: ["Requests", "Profile"],
+export const tenantApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllListings: builder.query({
-      query: () => "/landlords/listings",
+      query: () => ({
+        url: "/landlords/listings",
+        method: "GET",
+      }),
+      providesTags: ["Listings"],
     }),
+
     getSingleListing: builder.query({
-      query: (id) => `/landlords/listings/${id}`,
+      query: (id) => ({
+        url: `/landlords/listings/${id}`,
+        method: "GET",
+      }),
     }),
+
     submitRentalRequest: builder.mutation({
       query: (payload) => ({
         url: "/tenants/requests",
@@ -32,10 +27,15 @@ export const tenantApi = createApi({
       }),
       invalidatesTags: ["Requests"],
     }),
+
     getMyRequests: builder.query({
-      query: () => "/tenants/my-requests",
+      query: () => ({
+        url: "/tenants/my-requests",
+        method: "GET",
+      }),
       providesTags: ["Requests"],
     }),
+
     updateProfile: builder.mutation({
       query: (payload) => ({
         url: "/tenants/profile",
@@ -44,19 +44,30 @@ export const tenantApi = createApi({
       }),
       invalidatesTags: ["Profile"],
     }),
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     makePayment: builder.mutation<any, { tenantRequest: string }>({
-      query: ({ tenantRequest }) => ({
+      query: (tenantRequest) => ({
         url: `/order/rental-payment`,
         method: "POST",
         body: { tenantRequest },
       }),
+      invalidatesTags: ["Orders", "Requests"],
     }),
+
     verifyPayment: builder.query({
-      query: (orderId) => `/order/verify?orderId=${orderId}`,
+      query: (orderId) => ({
+        url: `/order/verify?orderId=${orderId}`,
+        method: "GET",
+      }),
     }),
+
     getMyOrders: builder.query({
-      query: () => `/order/my-order`,
+      query: () => ({
+        url: `/order/my-order`,
+        method: "GET",
+      }),
+      providesTags: ["Orders"],
     }),
   }),
 });

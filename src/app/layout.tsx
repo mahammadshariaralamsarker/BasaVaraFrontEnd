@@ -1,6 +1,6 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-import "./globals.css"; 
+import "./globals.css";
 import Providers from "@/providers/Providers";
 import Navbar from "@/components/shared/Navbar";
 
@@ -15,13 +15,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Providers>
-      <html lang="en" data-theme="light">
-        <body>
+    <html lang="en" data-theme="light">
+      <body>
+        <Providers>
           <Navbar />
           <div className="min-h-screen w-[90%] mx-auto">{children}</div>
-        </body>
-      </html>
-    </Providers>
+        </Providers>
+      </body>
+    </html>
   );
 }

@@ -10,7 +10,10 @@ import {
 } from "@/redux/apis/tenant.slice";
 
 const MyRequestsPage = () => {
+  // const token = useSelector((state: any) => state.auth.token);
+
   const { data, isLoading } = useGetMyRequestsQuery(undefined);
+
   const [makePayment, { isLoading: isPaying }] = useMakePaymentMutation();
 
   if (isLoading) return <div className="p-4">Loading...</div>;
@@ -18,14 +21,13 @@ const MyRequestsPage = () => {
   const handleSubmit = async (tenantRequestId: string) => {
     console.log(tenantRequestId);
     try {
-      const response = await makePayment({
-        tenantRequest: tenantRequestId,
-      }).unwrap();
+      const response = await makePayment(tenantRequestId).unwrap();
       console.log(response);
       if (response?.data) {
         window.open(response?.data, "_blank");
       }
     } catch (error) {
+      alert(error);
       console.error("Payment initiation failed", error);
       alert("Failed to initiate payment.");
     }
@@ -44,7 +46,7 @@ const MyRequestsPage = () => {
             {/* Left: Full Height Image */}
             <div className="w-60 h-full">
               <Image
-                src={product?.imageUrls?.[0] || "/placeholder.png"}
+                src={(product?.imageUrls?.[0] || "/placeholder.png").trim()}
                 alt="Property"
                 width={240}
                 height={180}
@@ -94,7 +96,7 @@ const MyRequestsPage = () => {
                   }
                   onClick={() => handleSubmit(request._id)}
                 >
-                  Pay Now
+                  Pay Nows
                 </Button>
               </div>
             </div>

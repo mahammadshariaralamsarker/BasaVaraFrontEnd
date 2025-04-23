@@ -1,27 +1,31 @@
 "use client";
 
-import { useUser } from "@/context/UserContext";
-import { logout } from "@/lib/services/AuthService";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/redux/features/auth/authSlice";
 
 const Navbar = () => {
-  const user = useUser();
-  const navigate = useRouter();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const user = useSelector((state) => state.auth.user); // ✅ adjust based on your store
 
   const handleLogout = async () => {
-    await logout();
-    user.setUser(null);
-    navigate.push("/login");
+    dispatch(logout()); // ✅ clear Redux state
+    localStorage.removeItem("token");
+    router.push("/login"); // ✅ redirect to login
   };
-  const dashboard = async () => {
-    navigate.push(`/${user?.user?.role}`);
+
+  const dashboard = () => {
+    if (user?.role) {
+      router.push(`/${user.role}`);
+    }
   };
 
   const menuItems = (
     <>
       <li className="hover:text-gray-600">
-        <Link href="/">Home</Link>
+        <Link href="/home">Home</Link>
       </li>
       <li className="hover:text-gray-600">
         <Link href="/tenants">Tenants</Link>
@@ -35,8 +39,8 @@ const Navbar = () => {
       <li className="hover:text-gray-600">
         <Link href="/support">Support</Link>
       </li>
-      <li onClick={dashboard} className="hover:text-gray-600">
-        <Link href="/dashboard">Dashboard</Link>
+      <li onClick={dashboard} className="hover:text-gray-600 cursor-pointer">
+        Dashboard
       </li>
     </>
   );
@@ -46,7 +50,6 @@ const Navbar = () => {
       {/* Logo & Mobile Menu */}
       <div className="flex items-center">
         <div className="relative lg:hidden">
-          {/* Mobile dropdown */}
           <div
             tabIndex={0}
             role="button"
@@ -87,10 +90,10 @@ const Navbar = () => {
         <ul className="flex space-x-6 text-gray-800">{menuItems}</ul>
       </div>
 
-      {/* Login / Logout button */}
-      <h1>{user?.user?.email}</h1>
+      {/* User and Auth Button */}
+      <h1>{user?.email}</h1>
       <div className="flex items-center">
-        {user?.user?.email ? (
+        {user?.email ? (
           <button
             onClick={handleLogout}
             className="border border-red-500 text-red-500 px-5 py-2 rounded-full hover:bg-red-500 hover:text-black transition duration-200"

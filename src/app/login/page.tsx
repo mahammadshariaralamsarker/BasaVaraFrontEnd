@@ -2,7 +2,15 @@
 
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { loginUser } from "@/lib/services/AuthService";
+
+import { useAppDispatch } from "@/redux/hooks";
+
+import { verifyToken } from "@/utils/verifyToken";
+import { setUser } from "@/redux/features/auth/authSlice";
+import { useLoginMutation } from "@/redux/features/auth/authApi";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 
 type FormValues = {
   email: string;
@@ -10,6 +18,10 @@ type FormValues = {
 };
 
 const LoginPage = () => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [login] = useLoginMutation(); //ekta array return korbe
+
   const {
     register,
     handleSubmit,
@@ -17,17 +29,23 @@ const LoginPage = () => {
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
-    try {
-      const res = await loginUser(data);
-      if (res?.status) {
-        alert("Login successful!");
-        window.location.href = "/dashboard";
-      } else {
-        alert("Login failed. Please try again.");
-      }
-    } catch (err: any) {
-      console.error(err);
-    }
+    const userInfo = {
+      email: data.email,
+      password: data.password,
+    };
+
+    const res = await login(userInfo).unwrap();
+    const token = res.data.token;
+
+    // Save in localStorage for client-side access
+    localStorage.setItem("token", token);
+
+    const decoded = verifyToken(token);
+    localStorage.setItem("token", token);
+    dispatch(setUser({ user: decoded, token }));
+
+    toast.success("Login Successfully");
+    router.push(`/${decoded?.role}`);
   };
 
   return (
