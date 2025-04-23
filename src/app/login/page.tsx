@@ -20,6 +20,7 @@ const LoginPage = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       const res = await loginUser(data);  
+      console.log(res);
       if (res?.status) {
         alert("Login successful!");
         window.location.href = "/dashboard"; 

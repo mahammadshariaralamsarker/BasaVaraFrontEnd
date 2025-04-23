@@ -1,92 +1,129 @@
 "use client"
-
-import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
-import { ArrowLeft, Upload } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Upload, ArrowLeft } from "lucide-react"
+import { useCreateListingMutation } from "@/redux/apis/landlord.slice"
+import { ImageUploader } from "@/components/shared/ImageUploader"
+import { useEffect, useState } from "react"
 
-const formSchema = z.object({
-  title: z.string().min(3, {
-    message: "Title must be at least 3 characters.",
-  }),
-  location: z.string().min(3, {
-    message: "Location must be at least 3 characters.",
-  }),
-  price: z.coerce.number().positive({
-    message: "Price must be a positive number.",
-  }),
-  bedrooms: z.coerce.number().int().positive({
-    message: "Bedrooms must be a positive integer.",
-  }),
-  bathrooms: z.coerce.number().positive({
-    message: "Bathrooms must be a positive number.",
-  }),
-  area: z.coerce.number().positive({
-    message: "Area must be a positive number.",
-  }),
-  status: z.enum(["Available", "Rented", "Pending"]),
-  description: z.string().min(10, {
-    message: "Description must be at least 10 characters.",
-  }),
-  amenities: z.array(z.string()).optional(),
-})
 
-const amenitiesList = [
-  { id: "parking", label: "Parking" },
-  { id: "pool", label: "Swimming Pool" },
-  { id: "gym", label: "Gym" },
-  { id: "security", label: "Security System" },
-  { id: "ac", label: "Air Conditioning" },
-  { id: "heating", label: "Heating" },
-  { id: "laundry", label: "Laundry" },
-  { id: "pets", label: "Pet Friendly" },
-]
 
 export default function NewPropertyPage() {
   const router = useRouter()
   const { toast } = useToast()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [createListing, { isLoading }] = useCreateListingMutation();
+  const [images, setImages] = useState<File[]>([]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm({
     defaultValues: {
       title: "",
       location: "",
-      price: undefined,
-      bedrooms: undefined,
-      bathrooms: undefined,
-      area: undefined,
-      status: "Available",
+      rent: 0,
+      bedrooms: 0,
+      bathrooms: 0,
+      area: 0,
+      houseStatus: "available",
       description: "",
-      amenities: [],
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
+  type FormValues = {
+    title: string;
+    location: string;
+    rent: number;
+    bedrooms: number;
+    bathrooms: number;
+    area: number;
+    houseStatus: string;
+    description: string;
+  };
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values)
-      setIsSubmitting(false)
+  // const onSubmit = async (values: FormValues) => {
+  //   try {
+  //     await createListing({ data: values }).unwrap()
 
+  //     toast({
+  //       title: "Success!",
+  //       description: "Property has been created.",
+  //     })
+
+  //     router.push("/landlord/properties")
+  //   } catch (err) {
+  //     toast({
+  //       title: "Error!",
+  //       description: "Failed to create property. Please try again.",
+  //       variant: "destructive",
+  //     })
+  //   }
+  // }
+
+
+  
+  async function onSubmit(values) {
+
+    console.log(values)
+      console.log(images);;
+    try {
+      const res = await fetch("http://localhost:5000/landlords/listings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: values, 
+        }),
+      })
+  
+      const data = await res.json()
+  
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong!")
+      }
+  
       toast({
         title: "Property created",
         description: "Your property has been successfully created.",
       })
-
+  
       router.push("/landlord/properties")
-    }, 1500)
+    } catch (error) {
+      console.error("Error:", error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create property",
+        variant: "destructive",
+      })
+    } finally {
+
+    }
   }
 
   return (
@@ -103,10 +140,12 @@ export default function NewPropertyPage() {
           <CardTitle>Property Details</CardTitle>
           <CardDescription>Enter the details of your new property.</CardDescription>
         </CardHeader>
+
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid gap-6 md:grid-cols-2">
+                {/** Title */}
                 <FormField
                   control={form.control}
                   name="title"
@@ -120,6 +159,8 @@ export default function NewPropertyPage() {
                     </FormItem>
                   )}
                 />
+
+                {/** Location */}
                 <FormField
                   control={form.control}
                   name="location"
@@ -133,22 +174,26 @@ export default function NewPropertyPage() {
                     </FormItem>
                   )}
                 />
+
+                {/** Rent */}
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="rent"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Monthly Rent ($)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="1500" {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/** House Status */}
                 <FormField
                   control={form.control}
-                  name="status"
+                  name="houseStatus"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Status</FormLabel>
@@ -159,15 +204,17 @@ export default function NewPropertyPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Available">Available</SelectItem>
-                          <SelectItem value="Rented">Rented</SelectItem>
-                          <SelectItem value="Pending">Pending</SelectItem>
+                          <SelectItem value="available">Available</SelectItem>
+                          <SelectItem value="rented">Rented</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/** Bedrooms */}
                 <FormField
                   control={form.control}
                   name="bedrooms"
@@ -175,12 +222,14 @@ export default function NewPropertyPage() {
                     <FormItem>
                       <FormLabel>Bedrooms</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="2" {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/** Bathrooms */}
                 <FormField
                   control={form.control}
                   name="bathrooms"
@@ -188,12 +237,14 @@ export default function NewPropertyPage() {
                     <FormItem>
                       <FormLabel>Bathrooms</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="1.5" {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/** Area */}
                 <FormField
                   control={form.control}
                   name="area"
@@ -201,12 +252,14 @@ export default function NewPropertyPage() {
                     <FormItem>
                       <FormLabel>Area (sq ft)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="1200" {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/** Description */}
                 <div className="md:col-span-2">
                   <FormField
                     control={form.control}
@@ -215,54 +268,15 @@ export default function NewPropertyPage() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Describe the property..." className="min-h-[120px]" {...field} />
+                          <Textarea placeholder="Describe the property..." {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className="md:col-span-2">
-                  <FormField
-                    control={form.control}
-                    name="amenities"
-                    render={() => (
-                      <FormItem>
-                        <div className="mb-4">
-                          <FormLabel>Amenities</FormLabel>
-                          <FormDescription>Select all amenities that apply to this property.</FormDescription>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                          {amenitiesList.map((amenity) => (
-                            <FormField
-                              key={amenity.id}
-                              control={form.control}
-                              name="amenities"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem key={amenity.id} className="flex flex-row items-start space-x-3 space-y-0">
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(amenity.id)}
-                                        onCheckedChange={(checked) => {
-                                          return checked
-                                            ? field.onChange([...(field.value || []), amenity.id])
-                                            : field.onChange(field.value?.filter((value) => value !== amenity.id))
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">{amenity.label}</FormLabel>
-                                  </FormItem>
-                                )
-                              }}
-                            />
-                          ))}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+
+                {/* * Image Upload Placeholder
                 <div className="md:col-span-2">
                   <FormLabel>Property Images</FormLabel>
                   <FormDescription className="mb-4">
@@ -278,15 +292,17 @@ export default function NewPropertyPage() {
                       </Button>
                     </div>
                   </div>
-                </div>
+                </div> */}
+
+<ImageUploader onFilesChange={(files) => setImages(files)} />
               </div>
 
               <CardFooter className="flex justify-end gap-2 px-0">
                 <Button type="button" variant="outline" onClick={() => router.back()}>
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-teal-600 hover:bg-teal-700" disabled={isSubmitting}>
-                  {isSubmitting ? "Creating..." : "Create Property"}
+                <Button type="submit" className="bg-teal-600 hover:bg-teal-700" disabled={isLoading}>
+                  {isLoading ? "Creating..." : "Create Property"}
                 </Button>
               </CardFooter>
             </form>
