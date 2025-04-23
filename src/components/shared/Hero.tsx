@@ -44,7 +44,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="w-[90%] px-6 py-24 max-w-7xl mx-auto">
+    <section className="w-[90%] px-6 py-32 max-w-7xl mx-auto">
       {/* Hero Header */}
       <div className="text-center mb-10">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
