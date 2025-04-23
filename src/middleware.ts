@@ -50,7 +50,7 @@ export const config = {
     "/dashboard",
     "/admin",
     "/admin/:page",
-    "/tenant/:page",
+    "/landlord/:page",
     "/tenant/:page",
   ],
 };

@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+
+
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000' }),
@@ -7,8 +9,7 @@ export const adminApi = createApi({
   endpoints: (builder) => ({
     getAllListings: builder.query({
       query: () => '/admin/listings',
-      providesTags: ['Listings'], 
-      
+      providesTags: ['Listings'],   
     }),
     getAllUsers: builder.query({
       query: () => '/admin/users',

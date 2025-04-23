@@ -1,8 +1,6 @@
-"use client"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { useToast } from "@/components/ui/use-toast"
-import { Button } from "@/components/ui/button"
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,16 +9,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -28,168 +26,63 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Upload, ArrowLeft } from "lucide-react"
-import { useCreateListingMutation } from "@/redux/apis/landlord.slice"
-import { ImageUploader } from "@/components/shared/ImageUploader"
-import { useEffect, useState } from "react"
+} from "@/components/ui/card";
+import { useForm } from "react-hook-form";
+import { formSchema } from "@/lib/constants";
+import { useRouter } from "next/navigation";
+import ImageUploader from "@/components/ui/core/ImageUploader";
+import { useState } from "react";
+import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
+import { useCreateListingMutation } from "@/redux/apis/landlord.slice";
 
-
-
-export default function NewPropertyPage() {
-  const router = useRouter()
-  const { toast } = useToast()
-  const [createListing, { isLoading }] = useCreateListingMutation();
-  const [images, setImages] = useState<File[]>([]);
-
+export default function Page() {
+  const [createListing] = useCreateListingMutation();
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
+  const router = useRouter();
   const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       location: "",
-      rent: 0,
+      price: 0, 
       bedrooms: 0,
       bathrooms: 0,
       area: 0,
-      houseStatus: "available",
       description: "",
-      LandlordID: "6803e50226cf52234581c96e"
     },
-  })
+  });
 
-  type FormValues = {
-    title: string;
-    location: string;
-    rent: number;
-    bedrooms: number;
-    bathrooms: number;
-    area: number;
-    houseStatus: string;
-    description: string;
+  const onSubmit = (values) => {
+    const formData = new FormData();
+    const stringifiedValues = Object.fromEntries(
+      Object.entries(values).map(([key, value]) => [key, String(value)])
+    );
+    console.log(stringifiedValues, "stringifiedValues");
+
+    formData.append("data", JSON.stringify(stringifiedValues));
+    imageFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    console.log("Form data:", formData);
+
+    createListing({ data: formData });
   };
-
-  // const onSubmit = async (values: FormValues) => {
-  //   try {
-  //     await createListing({ data: values }).unwrap()
-
-  //     toast({
-  //       title: "Success!",
-  //       description: "Property has been created.",
-  //     })
-
-  //     router.push("/landlord/properties")
-  //   } catch (err) {
-  //     toast({
-  //       title: "Error!",
-  //       description: "Failed to create property. Please try again.",
-  //       variant: "destructive",
-  //     })
-  //   }
-  // }
-
-
-  
-  // async function onSubmit(values) {
-
-  //   console.log(values)
-  //     console.log(images);;
-  //   try {
-  //     const res = await fetch("http://localhost:5000/landlords/listings", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         data: values,
-          
-  //       }),
-  //     })
-  
-  //     const data = await res.json()
-  
-  //     if (!res.ok) {
-  //       throw new Error(data.message || "Something went wrong!")
-  //     }
-  
-  //     toast({
-  //       title: "Property created",
-  //       description: "Your property has been successfully created.",
-  //     })
-  
-  //     router.push("/landlord/properties")
-  //   } catch (error) {
-  //     console.error("Error:", error)
-  //     toast({
-  //       title: "Error",
-  //       description: error.message || "Failed to create property",
-  //       variant: "destructive",
-  //     })
-  //   } finally {
-
-  //   }
-  // }
-
-  async function onSubmit(values) {
-    console.log(values);
-    console.log(images); // assuming images is an array of File or FileList
-  
-    try {
-      const formData = new FormData();
-  
-      // ❗ Send values as a JSON string under key `data`
-      formData.append("data", JSON.stringify(values));
-  
-      // Add images to the same key: `images`
-      for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]);
-      }
-  
-      const res = await fetch("http://localhost:5000/landlords/listings", {
-        method: "POST",
-        body: formData, // no content-type headers needed
-      });
-  
-      const data = await res.json();
-  
-      if (!res.ok) {
-        throw new Error(data.message || "Something went wrong!");
-      }
-  
-      toast({
-        title: "Property created",
-        description: "Your property has been successfully created.",
-      });
-  
-      router.push("/landlord/properties");
-    } catch (error) {
-      console.error("Error:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create property",
-        variant: "destructive",
-      });
-    }
-  }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => router.back()} className="h-8 w-8">
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <h1 className="text-3xl font-bold tracking-tight">Add New Property</h1>
-      </div>
-
       <Card>
         <CardHeader>
-          <CardTitle>Property Details</CardTitle>
-          <CardDescription>Enter the details of your new property.</CardDescription>
+          <CardTitle>Property ADD </CardTitle>
+          <CardDescription>
+            Update the details of your property.
+          </CardDescription>
         </CardHeader>
-
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid gap-6 md:grid-cols-2">
-                {/** Title */}
                 <FormField
                   control={form.control}
                   name="title"
@@ -203,8 +96,6 @@ export default function NewPropertyPage() {
                     </FormItem>
                   )}
                 />
-
-                {/** Location */}
                 <FormField
                   control={form.control}
                   name="location"
@@ -218,47 +109,51 @@ export default function NewPropertyPage() {
                     </FormItem>
                   )}
                 />
-
-                {/** Rent */}
                 <FormField
                   control={form.control}
-                  name="rent"
+                  name="price"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Monthly Rent ($)</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="1500"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/** House Status */}
                 <FormField
                   control={form.control}
-                  name="houseStatus"
+                  name="status"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="available">Available</SelectItem>
-                          <SelectItem value="rented">Rented</SelectItem>
-                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="Available">Available</SelectItem>
+                          <SelectItem value="Rented">Rented</SelectItem>
+                          <SelectItem value="Pending">Pending</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/** Bedrooms */}
                 <FormField
                   control={form.control}
                   name="bedrooms"
@@ -266,14 +161,19 @@ export default function NewPropertyPage() {
                     <FormItem>
                       <FormLabel>Bedrooms</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="2"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/** Bathrooms */}
                 <FormField
                   control={form.control}
                   name="bathrooms"
@@ -281,14 +181,20 @@ export default function NewPropertyPage() {
                     <FormItem>
                       <FormLabel>Bathrooms</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="1.5"
+                          step="0.5"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/** Area */}
                 <FormField
                   control={form.control}
                   name="area"
@@ -296,14 +202,19 @@ export default function NewPropertyPage() {
                     <FormItem>
                       <FormLabel>Area (sq ft)</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="1200"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/** Description */}
                 <div className="md:col-span-2">
                   <FormField
                     control={form.control}
@@ -312,7 +223,11 @@ export default function NewPropertyPage() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Describe the property..." {...field} />
+                          <Textarea
+                            placeholder="Describe the property..."
+                            className="min-h-[120px]"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -320,39 +235,40 @@ export default function NewPropertyPage() {
                   />
                 </div>
 
-                {/* * Image Upload Placeholder
                 <div className="md:col-span-2">
                   <FormLabel>Property Images</FormLabel>
-                  <FormDescription className="mb-4">
-                    Upload images of your property. You can upload multiple images.
+                  <FormDescription className="mb-2">
+                    Upload images of your property. You can upload multiple
+                    images.
                   </FormDescription>
-                  <div className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-12">
-                    <div className="flex flex-col items-center">
-                      <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                      <p className="text-sm font-medium mb-1">Drag and drop your images here</p>
-                      <p className="text-xs text-muted-foreground mb-4">PNG, JPG, WEBP up to 10MB</p>
-                      <Button type="button" variant="outline" size="sm">
-                        Browse Files
-                      </Button>
-                    </div>
-                  </div>
-                </div> */}
 
-<ImageUploader onFilesChange={(files) => setImages(files)} />
+                  <ImagePreviewer
+                    setImageFiles={setImageFiles}
+                    imagePreview={imagePreview}
+                    setImagePreview={setImagePreview}
+                  />
+
+                  <ImageUploader
+                    setImageFiles={setImageFiles}
+                    setImagePreview={setImagePreview}
+                  />
+                </div>
               </div>
 
               <CardFooter className="flex justify-end gap-2 px-0">
-                <Button type="button" variant="outline" onClick={() => router.back()}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.back()}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-teal-600 hover:bg-teal-700" disabled={isLoading}>
-                  {isLoading ? "Creating..." : "Create Property"}
-                </Button>
+                <Button type="submit">Submit</Button>
               </CardFooter>
             </form>
           </Form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

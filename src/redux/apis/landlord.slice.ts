@@ -14,11 +14,11 @@ interface TProduct {
   area: string
   houseStatus?: "available" | "rented"
 }
+ 
 export const landlordApi = createApi({
   reducerPath: "landlordApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000",
-    // credentials:'include'
+    baseUrl: "http://localhost:5000", 
   }),
   tagTypes: ["Product"],
   endpoints: (builder) => ({
@@ -30,17 +30,17 @@ export const landlordApi = createApi({
     getSingleListing: builder.query<TProduct, string>({
       query: (id) => `/landlords/listings/${id}`,
       providesTags: (result, error, id) => [{ type: "Product", id }],
-    }),
+    }), 
 
-    createListing: builder.mutation<void, FormData>({
-      query: (body) => ({
-        url: "/landlords/listings",
+    createListing: builder.mutation({
+      query: ({  data }) => ({
+        url: "/landlords/listings", 
         method: "POST",
-        body,
+        body: data,
       }),
       invalidatesTags: ["Product"],
     }),
-
+    
     updateListing: builder.mutation<void, { id: string; data: FormData }>({
       query: ({ id, data }) => ({
         url: `/landlords/listings/${id}`,

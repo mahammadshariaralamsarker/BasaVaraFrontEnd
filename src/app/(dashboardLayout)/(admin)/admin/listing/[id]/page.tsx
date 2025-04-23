@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { formSchema } from "@/lib/constants";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import ImageUploader from "@/components/ui/core/ImageUploader";
 import { useState } from "react";
 import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
@@ -58,24 +58,18 @@ export default function Page({ params }: { params: { id: string } }) {
 
   const onSubmit = (values) => {
     const formData = new FormData();
-  
-    // Convert all form values to string and wrap them under 'data'
     const stringifiedValues = Object.fromEntries(
       Object.entries(values).map(([key, value]) => [key, String(value)])
     );
-  
-    // Append the stringified values as a JSON blob under 'data'
+
     formData.append("data", JSON.stringify(stringifiedValues));
-  
-    // Append image files one by one under 'images'
     imageFiles.forEach((file) => {
       formData.append("images", file);
     });
-   
+
     updateListingByAdmin({ id, data: formData });
     router.push("/admin/listing");
   };
-  
 
   return (
     <div className="flex flex-col gap-6">
