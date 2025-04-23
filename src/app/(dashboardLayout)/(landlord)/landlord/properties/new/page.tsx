@@ -31,13 +31,16 @@ import {
 } from "@/components/ui/card"
 import { Upload, ArrowLeft } from "lucide-react"
 import { useCreateListingMutation } from "@/redux/apis/landlord.slice"
+import { ImageUploader } from "@/components/shared/ImageUploader"
+import { useEffect, useState } from "react"
 
 
 
 export default function NewPropertyPage() {
   const router = useRouter()
   const { toast } = useToast()
-  const [createListing, { isLoading }] = useCreateListingMutation()
+  const [createListing, { isLoading }] = useCreateListingMutation();
+  const [images, setImages] = useState<File[]>([]);
 
   const form = useForm({
     defaultValues: {
@@ -82,6 +85,10 @@ export default function NewPropertyPage() {
   //   }
   // }
 
+
+  useEffect(() => {
+    console.log(images);
+  }, [images]);
   async function onSubmit(values) {
 
   
@@ -270,7 +277,7 @@ export default function NewPropertyPage() {
                   />
                 </div>
 
-                {/** Image Upload Placeholder */}
+                {/* * Image Upload Placeholder
                 <div className="md:col-span-2">
                   <FormLabel>Property Images</FormLabel>
                   <FormDescription className="mb-4">
@@ -286,7 +293,9 @@ export default function NewPropertyPage() {
                       </Button>
                     </div>
                   </div>
-                </div>
+                </div> */}
+
+<ImageUploader onFilesChange={(files) => setImages(files)} />
               </div>
 
               <CardFooter className="flex justify-end gap-2 px-0">
