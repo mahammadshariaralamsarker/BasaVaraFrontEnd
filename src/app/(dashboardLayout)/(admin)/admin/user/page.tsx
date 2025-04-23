@@ -1,31 +1,25 @@
 "use client";
 import React from "react";
-import { useDeleteByAdminMutation, useGetAllUsersQuery } from "@/redux/apis/admin.slice";
+import { useDeleteUserByAdminMutation, useGetAllUsersQuery } from "@/redux/apis/admin.slice";
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllUsersQuery({});
-  const [deleteByAdmin] = useDeleteByAdminMutation();
-  
-  console.log("data", data);
+  const [deleteByAdmin] = useDeleteUserByAdminMutation();
+
+  const handleDeleteUser = (id: string) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (confirmDelete) {
+      console.log("Delete user with ID:", id);
+      deleteByAdmin(id);
+    }
+  };
+
   if (isLoading)
     return <div className="text-center py-8">Loading users...</div>;
   if (error)
     return (
       <div className="text-center py-8 text-red-500">Error loading users</div>
     );
-
-  const handleDelete = (id: string) => {
-    // Confirm deletion
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-    if (confirmDelete) {
-      console.log("Delete user with ID:", id);
-      deleteByAdmin(id);
-    }
-
-    // Add your delete logic here
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -34,21 +28,11 @@ export default function Page() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Role
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Phone
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -72,26 +56,23 @@ export default function Page() {
                   <div className="text-gray-600">{user.email}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${
-                      user.role === "admin"
-                        ? "bg-purple-100 text-purple-800"
-                        : user.role === "manager"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.role === "admin"
+                      ? "bg-purple-100 text-purple-800"
+                      : user.role === "manager"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-green-100 text-green-800"
+                  }`}>
                     {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                   {user.phone || "N/A"}
+                  {user.phone || "N/A"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleDelete(user._id)}
+                      onClick={() => handleDeleteUser(user._id)}
                       className="text-red-600 hover:text-red-900"
                     >
                       Delete
