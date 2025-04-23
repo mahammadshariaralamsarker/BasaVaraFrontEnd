@@ -8,6 +8,7 @@ export const adminApi = createApi({
     getAllListings: builder.query({
       query: () => '/admin/listings',
       providesTags: ['Listings'], 
+      
     }),
     getAllUsers: builder.query({
       query: () => '/admin/users',
@@ -25,7 +26,7 @@ export const adminApi = createApi({
         url: `/admin/listings/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Listings'], // ✅ Correctly invalidates
+      invalidatesTags: ['Listings'] 
     }),
   }),
 });

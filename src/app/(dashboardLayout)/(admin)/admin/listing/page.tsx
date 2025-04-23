@@ -1,6 +1,7 @@
 'use client'
 import { useDeleteListingByAdminMutation, useGetAllListingsQuery } from '@/redux/apis/admin.slice'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 export default function Page() {
@@ -15,9 +16,7 @@ export default function Page() {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this Landlord?"
     );
-    if (confirmDelete) {
-      console.log("Delete user with ID:", id);
-      // deleteByAdmin(id);
+    if (confirmDelete) { 
       deleteByAdmin(id)
     } 
 
@@ -65,12 +64,13 @@ export default function Page() {
                   <div className="text-gray-900">{listing.bedrooms}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
+                   
+                  <Link
+                    href={`/admin/listing/${listing._id}`}
                     className="text-blue-600 hover:text-blue-900 mr-4"
-                    onClick={() => handleUpdate(listing._id)}
                   >
                     Update
-                  </button>
+                  </Link>
                   <button
                     className="text-red-600 hover:text-red-900"
                     onClick={() => handleDeleteListing(listing._id)}
@@ -89,13 +89,7 @@ export default function Page() {
     </div>
   )
 
-  function handleUpdate(id: string) {
-    console.log('Update listing with ID:', id)
-    // Add your update logic here
-  }
 
-  function handleDelete(id: string) {
-    console.log('Delete listing with ID:', id)
-    // Add your delete logic here
-  }
+
+
 }
