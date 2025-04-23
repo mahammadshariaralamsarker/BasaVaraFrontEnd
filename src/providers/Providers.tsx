@@ -1,11 +1,12 @@
 "use client";
 
 import UserProvider from "@/context/UserContext";
+import StoreProviders from "./StoreProvider";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <UserProvider>
-      {children}
+      <StoreProviders>{children}</StoreProviders>
     </UserProvider>
   );
 };

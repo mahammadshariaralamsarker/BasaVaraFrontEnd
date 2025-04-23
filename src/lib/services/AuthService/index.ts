@@ -16,7 +16,7 @@ export const registerUser = async (userData: FieldValues) => {
     const result = await res.json();
 
     if (result.success) {
-      (await cookies()).set("accessToken", result.data.accessToken);
+      (await cookies()).set("token", result.data.token);
       (await cookies()).set("refreshToken", result?.data?.refreshToken);
     }
 
@@ -37,7 +37,6 @@ export const loginUser = async (userData: FieldValues) => {
     });
 
     const result = await res.json();
-    console.log(result);
     
     if (result?.status) {
       (await cookies()).set("token", result?.data?.token);
@@ -65,8 +64,10 @@ export const getCurrentUser = async () => {
   }
 };
 export const logout = async () => {
+  
   (await cookies()).delete("token");
   (await cookies()).delete("refresh-token");
+  
 };
 
 export const getNewToken = async () => {

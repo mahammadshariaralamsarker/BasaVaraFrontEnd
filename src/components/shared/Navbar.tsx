@@ -1,40 +1,80 @@
 'use client';
 
-import { useUser } from "@/context/UserContext";
-import { logout } from "@/lib/services/AuthService";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
+import { useUser } from '@/context/UserContext';
+import { logout } from '@/lib/services/AuthService';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
-  const user = useUser(); 
- 
+  const user = useUser();
+  const navigate = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    user.setUser(null);
+    navigate.push('/login');
+  };
+  const dashboard = async () => {
+    navigate.push(`/${user?.user?.role}`);
+  };
+
   const menuItems = (
     <>
-      <li className="hover:text-gray-600"><Link href="/">Home</Link></li>
-      <li className="hover:text-gray-600"><Link href="/about">About Us</Link></li>
-      <li className="hover:text-gray-600"><Link href="/support">Support</Link></li>
-      <li className="hover:text-gray-600"><Link href="/dashboard">Dashboard</Link></li>
+      <li className="hover:text-gray-600">
+        <Link href="/">Home</Link>
+      </li>
+      <li className="hover:text-gray-600">
+        <Link href="/about">About Us</Link>
+      </li>
+      <li className="hover:text-gray-600">
+        <Link href="/contact">Contact Us</Link>
+      </li>
+      <li className="hover:text-gray-600">
+        <Link href="/support">Support</Link>
+      </li>
+      <li onClick={dashboard} className="hover:text-gray-600">
+        <Link href="/dashboard">Dashboard</Link>
+      </li>
     </>
   );
 
   return (
     <div className="w-[90%] mx-auto flex items-center justify-between bg-white border-b py-4">
-      {/* Logo & menu */}
+      {/* Logo & Mobile Menu */}
       <div className="flex items-center">
         <div className="relative lg:hidden">
           {/* Mobile dropdown */}
-          <div tabIndex={0} role="button" className="p-2 rounded-md hover:bg-gray-100 focus:outline-none">
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16" />
+          <div
+            tabIndex={0}
+            role="button"
+            className="p-2 rounded-md hover:bg-gray-100 focus:outline-none"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
             </svg>
           </div>
-          <ul tabIndex={0} className="absolute mt-3 z-10 p-2 shadow-md bg-white rounded-md w-52">
+          <ul
+            tabIndex={0}
+            className="absolute mt-3 z-10 p-2 shadow-md bg-white rounded-md w-52"
+          >
             {menuItems}
           </ul>
         </div>
 
-        <Link href="/" className="ml-4 text-xl font-semibold text-gray-800 hover:text-gray-600">
+        <Link
+          href="/"
+          className="ml-4 text-xl font-semibold text-gray-800 hover:text-gray-600"
+        >
           NextAuth
         </Link>
       </div>
@@ -44,11 +84,12 @@ const Navbar = () => {
         <ul className="flex space-x-6 text-gray-800">{menuItems}</ul>
       </div>
 
-      {/* Login/Logout Button */}
+      {/* Login / Logout button */}
+      <h1>{user?.user?.email}</h1>
       <div className="flex items-center">
-        {user ? (
+        {user?.user?.email ? (
           <button
-            onClick={() => logout()}
+            onClick={handleLogout}
             className="border border-red-500 text-red-500 px-5 py-2 rounded-full hover:bg-red-500 hover:text-black transition duration-200"
           >
             Logout
