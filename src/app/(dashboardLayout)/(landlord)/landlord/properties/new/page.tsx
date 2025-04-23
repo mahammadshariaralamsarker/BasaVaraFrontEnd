@@ -52,6 +52,7 @@ export default function NewPropertyPage() {
       area: 0,
       houseStatus: "available",
       description: "",
+      LandlordID: "6803e50226cf52234581c96e"
     },
   })
 
@@ -87,42 +88,85 @@ export default function NewPropertyPage() {
 
 
   
-  async function onSubmit(values) {
+  // async function onSubmit(values) {
 
-    console.log(values)
-      console.log(images);;
+  //   console.log(values)
+  //     console.log(images);;
+  //   try {
+  //     const res = await fetch("http://localhost:5000/landlords/listings", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         data: values,
+          
+  //       }),
+  //     })
+  
+  //     const data = await res.json()
+  
+  //     if (!res.ok) {
+  //       throw new Error(data.message || "Something went wrong!")
+  //     }
+  
+  //     toast({
+  //       title: "Property created",
+  //       description: "Your property has been successfully created.",
+  //     })
+  
+  //     router.push("/landlord/properties")
+  //   } catch (error) {
+  //     console.error("Error:", error)
+  //     toast({
+  //       title: "Error",
+  //       description: error.message || "Failed to create property",
+  //       variant: "destructive",
+  //     })
+  //   } finally {
+
+  //   }
+  // }
+
+  async function onSubmit(values) {
+    console.log(values);
+    console.log(images); // assuming images is an array of File or FileList
+  
     try {
+      const formData = new FormData();
+  
+      // ❗ Send values as a JSON string under key `data`
+      formData.append("data", JSON.stringify(values));
+  
+      // Add images to the same key: `images`
+      for (let i = 0; i < images.length; i++) {
+        formData.append("images", images[i]);
+      }
+  
       const res = await fetch("http://localhost:5000/landlords/listings", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          data: values, 
-        }),
-      })
+        body: formData, // no content-type headers needed
+      });
   
-      const data = await res.json()
+      const data = await res.json();
   
       if (!res.ok) {
-        throw new Error(data.message || "Something went wrong!")
+        throw new Error(data.message || "Something went wrong!");
       }
   
       toast({
         title: "Property created",
         description: "Your property has been successfully created.",
-      })
+      });
   
-      router.push("/landlord/properties")
+      router.push("/landlord/properties");
     } catch (error) {
-      console.error("Error:", error)
+      console.error("Error:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to create property",
         variant: "destructive",
-      })
-    } finally {
-
+      });
     }
   }
 
