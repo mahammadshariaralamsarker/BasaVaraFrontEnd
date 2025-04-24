@@ -5,7 +5,6 @@ import {
   useGetAllListingsQuery,
 } from "@/redux/apis/admin.slice";
 import Image from "next/image";
-import Link from "next/link";
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllListingsQuery({});
@@ -93,12 +92,6 @@ export default function Page() {
                   <div className="text-gray-900">{listing.bedrooms}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <Link
-                    href={`/admin/listing/${listing._id}`}
-                    className="text-blue-600 hover:text-blue-900 mr-4"
-                  >
-                    Update
-                  </Link>
                   <button
                     className="text-red-600 hover:text-red-900"
                     onClick={() => handleDeleteListing(listing._id)}
