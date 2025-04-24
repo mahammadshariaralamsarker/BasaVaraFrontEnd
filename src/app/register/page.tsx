@@ -4,6 +4,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -50,8 +52,7 @@ const RegisterPage = () => {
       }
 
       const result = await response.json();
-      console.log("Server Response:", result);
-      alert("Registration successful!");
+      toast("Registration successful!",{position:"top-right"}); 
       setSuccess("Registration successful!");
       setErrorMsg("");
       //Redirect to home page
@@ -64,6 +65,7 @@ const RegisterPage = () => {
 
   return (
     <div className="my-10">
+      <ToastContainer   />
       <h1 className="text-center text-4xl font-bold mb-5">
         Register <span className="text-teal-500">Now</span>
       </h1>

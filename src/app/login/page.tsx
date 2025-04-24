@@ -3,15 +3,13 @@
 
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-
 import { useAppDispatch } from "@/redux/hooks";
-
 import { verifyToken } from "@/utils/verifyToken";
 import { JwtPayload } from "jsonwebtoken";
 import { setUser } from "@/redux/features/auth/authSlice";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
-import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
 
 type FormValues = {
   email: string;
@@ -68,12 +66,14 @@ const LoginPage = () => {
       dispatch(setUser({ user: decoded, token }));
 
       if (res?.status) {
-        toast.success(res?.message || "Login successful!");
+        toast.success(res?.message || "Login successful!", {
+          position: "top-center",
+        });
+        router.push(`/${decoded.role}`);
       } else {
         toast.warning(res?.message || "Login might have issues.");
       }
 
-      router.push(`/${decoded?.role}`);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const errorMessage =
@@ -84,7 +84,7 @@ const LoginPage = () => {
 
   return (
     <div className="my-10 w-[90%] mx-auto">
-      <Toaster />
+      <ToastContainer position="top-center" />
       <h1 className="text-center text-4xl mb-5 font-bold">
         Login <span className="text-teal-500">Here</span>
       </h1>

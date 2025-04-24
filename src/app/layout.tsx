@@ -1,10 +1,9 @@
 // app/layout.tsx
-import type { Metadata } from 'next';
-import './globals.css';
-import Providers from '@/providers/Providers';
-import Navbar from '@/components/shared/Navbar';
-import Footer from '@/components/shared/Footer';
-
+import type { Metadata } from "next";
+import "./globals.css";
+import Providers from "@/providers/Providers";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 
 export const metadata: Metadata = {
   title: "Next Auth",
@@ -18,7 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="light">
-      <body>
+      <body
+        cz-shortcut-listen="true"
+        data-new-gr-c-s-check-loaded="14.1232.0"
+        data-gr-ext-installed=""
+      >
         <Providers>
           <Navbar />
           <div className="min-h-screen w-[90%] mx-auto">{children}</div>
