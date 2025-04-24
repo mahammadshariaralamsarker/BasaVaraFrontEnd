@@ -33,7 +33,7 @@ const Navbar = () => {
   const menuItems = (
     <>
       <li className={navClass("/home")}>
-        <Link href="/home">Home</Link>
+        <Link href="/">Home</Link>
       </li>
       <li className={navClass("/tenants")}>
         <Link href="/tenants">Tenants</Link>
@@ -44,7 +44,7 @@ const Navbar = () => {
       <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
       </li> 
-      <li onClick={dashboard} className={navClass(" /*")}>
+      <li onClick={dashboard} className={navClass("/dashboard*")}>
         Dashboard
       </li>
     </>

@@ -7,11 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Bed, Bath, SquareIcon as SquareFeet } from "lucide-react";
 import { useGetAllListingsQuery } from "@/redux/apis/tenant.slice";
 import { IProduct } from "@/lib/types/product";
+import LoadingPage from "@/app/loading";
 
 export const Properties = ({ limit }: { limit?: number }) => {
   const { data, isLoading, isError } = useGetAllListingsQuery(undefined);
 
-  if (isLoading) return <p>Loading properties...</p>;
+  if (isLoading) return <LoadingPage/>;
   if (isError || !data?.data) return <p>Failed to load listings.</p>;
 
   const properties = limit ? data.data.slice(0, limit) : data.data;
