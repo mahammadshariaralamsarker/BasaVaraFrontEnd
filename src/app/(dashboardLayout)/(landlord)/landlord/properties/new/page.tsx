@@ -28,20 +28,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
-import { formSchema } from "@/lib/constants";
+
 import { useRouter } from "next/navigation";
-import ImageUploader from "@/components/ui/core/ImageUploader";
+
 import { useState } from "react";
+
+import { formSchema } from "@/lib/constants";
 import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
-import { useCreateListingMutation } from "@/redux/apis/landlord.slice";
-import { useUser } from "@/context/UserContext";
+import ImageUploader from "@/components/ui/core/ImageUploader";
+import { useCreateListingMutation } from "@/redux/apis/landlordslice";
 
 export default function Page() {
   const [createListing] = useCreateListingMutation();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const router = useRouter();
-  const { user } = useUser();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,9 +57,9 @@ export default function Page() {
     },
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (values: any) => {
     try {
-      values.LandlordID = user?.id;
       const formData = new FormData();
       const stringifiedValues = Object.fromEntries(
         Object.entries(values).map(([key, value]) => [key, String(value)])
@@ -71,7 +72,7 @@ export default function Page() {
       await createListing({ data: formData }).unwrap();
       router.push("/landlord/properties"); // update to your desired path
     } catch (error) {
-      console.error("Failed to create listing:", error); 
+      console.error("Failed to create listing:", error);
     }
   };
 

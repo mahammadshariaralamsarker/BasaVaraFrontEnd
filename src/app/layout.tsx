@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/providers/Providers";
 import Navbar from "@/components/shared/Navbar";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Next Auth",
@@ -15,17 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Providers>
-      <html lang="en" data-theme="light">
-        <body
-          cz-shortcut-listen="true"
-          data-new-gr-c-s-check-loaded="14.1232.0"
-          data-gr-ext-installed=""
-        >
+    <html lang="en" data-theme="light">
+      <body>
+        <Providers>
           <Navbar />
-          <div className="min-h-screen w-full mx-auto">{children}</div>
-        </body>
-      </html>
-    </Providers>
+          <div className="min-h-screen w-[90%] mx-auto">{children}</div>
+        </Providers>
+      </body>
+    </html>
   );
 }

@@ -10,7 +10,7 @@ type TImageUploader = {
   setImagePreview: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const ImageUploader = ({ 
+const ImageUploader = ({
   className,
   setImageFiles,
   setImagePreview,
@@ -39,10 +39,9 @@ const ImageUploader = ({
         id="image-upload"
         type="file"
         accept="image/*"
-        multiple 
+        multiple
         onChange={handleImageChange}
       />
-       
     </div>
   );
 };

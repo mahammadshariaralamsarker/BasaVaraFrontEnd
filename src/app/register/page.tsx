@@ -15,8 +15,6 @@ export type UserData = {
   confirmPassword: string;
   role: "tenant" | "landlord";
   phone: string;
-  address: string;
-  city: string;
 };
 const RegisterPage = () => {
   const {
@@ -52,7 +50,6 @@ const RegisterPage = () => {
       console.log("Server Response:", result);
       alert("Registration successful!");
       setSuccess("Registration successful!");
-      router.push("/login"); 
       setErrorMsg("");
     } catch (err: any) {
       console.error("Registration Error:", err.message);
@@ -151,6 +148,7 @@ const RegisterPage = () => {
                 type="text"
                 {...register("phone", {
                   required: "Phone is required",
+                  // valueAsNumber: true,
                 })}
                 placeholder="Phone"
                 className="w-full p-3 border border-gray-300 rounded"

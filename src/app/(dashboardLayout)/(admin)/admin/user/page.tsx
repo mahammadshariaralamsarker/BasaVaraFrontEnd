@@ -5,12 +5,10 @@ import {
   useDeleteUserByAdminMutation,
   useGetAllUsersQuery,
 } from "@/redux/apis/admin.slice";
- 
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllUsersQuery({});
   const [deleteByAdmin] = useDeleteUserByAdminMutation();
- 
   const handleDeleteUser = (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"
@@ -91,7 +89,10 @@ export default function Page() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleDeleteUser(user._id)}
+                      onClick={() => {
+                        console.log("User ID:", user._id); // ✅ this logs the ID
+                        handleDeleteUser(user._id);
+                      }}
                       className="text-red-600 hover:text-red-900"
                     >
                       Delete

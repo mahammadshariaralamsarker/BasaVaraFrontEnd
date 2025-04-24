@@ -1,6 +1,13 @@
 import { getCurrentUser } from "@/lib/services/AuthService";
 import { IUser } from "@/lib/types/user";
-import { createContext, useEffect, useState, Dispatch, SetStateAction, useContext } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+  useContext,
+} from "react";
 
 interface UserContextType {
   user: IUser | null;
@@ -32,15 +39,12 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-
-export const useUser  = () => {
+export const useUser = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
     throw new Error("useUserContext must be used within a UserProvider");
   }
   return context;
 };
-
-
 
 export default UserProvider;

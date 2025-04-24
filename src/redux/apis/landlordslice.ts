@@ -21,6 +21,7 @@ export const landlordApi = baseApi.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Product", id }],
     }),
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createListing: builder.mutation<void, { data: any }>({
       query: ({ data }) => ({
         url: "/landlords/listings",
@@ -55,7 +56,6 @@ export const landlordApi = baseApi.injectEndpoints({
       providesTags: ["Product"],
     }),
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     respondToRequest: builder.mutation<void, { requestId: string; data: any }>({
       query: ({ requestId, data }) => ({
         url: `/landlords/requests/${requestId}`,
@@ -63,6 +63,15 @@ export const landlordApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: ["Product"],
+    }),
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    getRentalRequests: builder.query<any[], void>({
+      query: () => ({
+        url: "/tenants/rental-requests", // assuming the backend uses `req.user.id`
+        method: "GET",
+      }),
+      providesTags: ["Product"],
     }),
   }),
 });
@@ -75,4 +84,5 @@ export const {
   useDeleteListingMutation,
   useGetMyPostingsQuery,
   useRespondToRequestMutation,
+  useGetRentalRequestsQuery,
 } = landlordApi;

@@ -1,5 +1,4 @@
-
-import { baseApi } from "../baseApi/baseApi";
+import { baseApi } from "./baseApi";
 
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

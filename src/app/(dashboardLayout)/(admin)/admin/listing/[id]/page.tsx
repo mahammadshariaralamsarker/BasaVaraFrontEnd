@@ -29,20 +29,22 @@ import {
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { formSchema } from "@/lib/constants";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ImageUploader from "@/components/ui/core/ImageUploader";
-import { use, useState } from "react";
+import { useState } from "react";
 import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
 import { useUpdateListingByAdminMutation } from "@/redux/apis/admin.slice";
- 
-export default function Page({ params }: { params: { id: string } }) {
+
+export default function Page() {
   const [updateListingByAdmin] = useUpdateListingByAdminMutation();
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
- 
-  console.log({params});
-  const { id } = use(params);
-  console.log(id);
+
+  const params = useParams(); // Returns: { id: '680a265e532f50d81f2e8ac7' }
+  const id = params.id;
+
+  console.log("Property ID:", id);
+
   const router = useRouter();
 
   const form = useForm({
@@ -51,7 +53,7 @@ export default function Page({ params }: { params: { id: string } }) {
       title: "",
       location: "",
       price: 0,
-      status: "",
+      status: "Available",
       bedrooms: 0,
       bathrooms: 0,
       area: 0,
@@ -59,17 +61,29 @@ export default function Page({ params }: { params: { id: string } }) {
     },
   });
 
-  const onSubmit = (values) => {
+  interface FormValues {
+    title: string;
+    location: string;
+    price: number;
+    status: string;
+    bedrooms: number;
+    bathrooms: number;
+    area: number;
+    description: string;
+  }
+
+  const onSubmit = (values: FormValues) => {
     const formData = new FormData();
     const stringifiedValues = Object.fromEntries(
       Object.entries(values).map(([key, value]) => [key, String(value)])
     );
 
     formData.append("data", JSON.stringify(stringifiedValues));
-    imageFiles.forEach((file) => {
+    imageFiles.forEach((file: File) => {
       formData.append("images", file);
     });
-
+    console.log("Inside on submit ");
+    console.log("id and formdata ", id, formData);
     updateListingByAdmin({ id, data: formData });
     router.push("/admin/listing");
   };
