@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { useDeleteListingByAdminMutation, useGetAllListingsQuery } from '@/redux/apis/admin.slice'
 import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+import Link from 'next/link' 
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllListingsQuery({})
@@ -19,8 +19,6 @@ export default function Page() {
     if (confirmDelete) { 
       deleteByAdmin(id)
     } 
-
-
   };
   return (
     <div className="container mx-auto px-4 py-8">

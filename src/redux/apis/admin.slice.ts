@@ -1,47 +1,47 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { baseApi } from "../baseApi/baseApi";
 
-
-export const adminApi = createApi({
-  reducerPath: 'adminApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000' }),
-  tagTypes: ['Users', 'Listings'], 
+export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllListings: builder.query({
-      query: () => '/admin/listings',
-      providesTags: ['Listings'],   
-    }),
     getAllUsers: builder.query({
-      query: () => '/admin/users',
-      providesTags: ['Users'],
+      query: () => ({
+        url: "/admin/users",
+        method: "GET",
+      }),
+      providesTags: ["Users"],
     }),
     deleteUserByAdmin: builder.mutation({
       query: (id) => ({
         url: `/admin/user/${id}`,
-        method: 'PATCH',
+        method: "PATCH",
       }),
-      invalidatesTags: ['Users'],
+      invalidatesTags: ["Users"],
     }),
     deleteListingByAdmin: builder.mutation({
       query: (id) => ({
         url: `/admin/listings/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
-      invalidatesTags: ['Listings'] 
+      invalidatesTags: ["Listings"],
     }),
     updateListingByAdmin: builder.mutation({
       query: ({ id, data }) => ({
         url: `/admin/listings/${id}`,
-        method: 'PATCH',
+        method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ['Listings'],
+      invalidatesTags: ["Listings"],
     }),
-
+    getAllListings: builder.query({
+      query: () => ({
+        url: "/admin/listings",
+        method: "GET",
+      }),
+      providesTags: ["Listings"],
+    }),
   }),
 });
-
-export const { 
+export const {
   useGetAllListingsQuery,
   useGetAllUsersQuery,
   useDeleteUserByAdminMutation,

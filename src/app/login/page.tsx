@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useForm } from "react-hook-form";
 import Link from "next/link"; 
 import { loginUser } from "@/lib/services/AuthService";
-import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 
 type FormValues = {
   email: string;
@@ -11,6 +13,8 @@ type FormValues = {
 };
 
 const LoginPage = () => {
+  const router = useRouter();
+  const { setLoading } = useUser();
   const {
     register,
     handleSubmit,
@@ -19,11 +23,16 @@ const LoginPage = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      setLoading(true);
       const res = await loginUser(data);  
-      console.log(res);
+       // Set loading to true before making the request
       if (res?.status) {
-        alert("Login successful!");
-        window.location.href = "/dashboard"; 
+        const token = res?.data?.token;
+        localStorage.setItem("token", token); // Store token in local storag
+        alert("Login successful!"); 
+        router.push("/");  
+        
+        
       } else {
         alert("Login failed. Please try again.");
       }
@@ -35,64 +44,65 @@ const LoginPage = () => {
 
   return (
     <div className="my-10 w-[90%] mx-auto">
-      <h1 className="text-center text-4xl mb-5 font-bold">
-        Login <span className="text-teal-500">Here</span>
-      </h1>
+    <h1 className="text-center text-4xl mb-5 font-bold">
+      Login <span className="text-teal-500">Here</span>
+    </h1>
+    <div className="w-full md:w-[50%] mx-auto bg-white p-6 shadow-lg rounded-lg">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-6">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            {...register("email")}
+            placeholder="Email"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+            required
+            defaultValue='admin@gmail.com'
+          />
+        </div>
 
-      <div className="w-full md:w-[50%] mx-auto bg-white p-6 shadow-lg rounded-lg">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-6">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register("email")}
-              placeholder="Email"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-              required
-            />
-          </div>
+        <div className="mb-6">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            {...register("password")}
+            placeholder="Password"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+            required
+            defaultValue="12345678" // For testing purposes, remove in production
+          />
+        </div>
 
-          <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              {...register("password")}
-              placeholder="Password"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-              required
-            />
-          </div>
+        <div>
+          <button
+            type="submit"
+            className="w-full border border-teal-500 text-teal-500 font-semibold py-2 px-4 rounded-md shadow-md hover:bg-teal-500 hover:text-black"
+          >
+            Login
+          </button>
+        </div>
+      </form>
 
-          <div>
-            <button
-              type="submit"
-              className="w-full border border-teal-500 text-teal-500 font-semibold py-2 px-4 rounded-md shadow-md hover:bg-teal-500 hover:text-black"
-            >
-              Login
-            </button>
-          </div>
-        </form>
-
-        <p className="text-center mt-4 text-sm text-gray-600">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-teal-500 hover:underline">
-            Create an account
-          </Link>
-        </p>
-      </div>
+      <p className="text-center mt-4 text-sm text-gray-600">
+        Don&apos;t have an account?{" "}
+        <Link href="/register" className="text-teal-500 hover:underline">
+          Create an account
+        </Link>
+      </p>
     </div>
+  </div>
   );
 };
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { jwtDecode } from "jwt-decode";
@@ -37,7 +38,7 @@ export const loginUser = async (userData: FieldValues) => {
     });
 
     const result = await res.json();
-    
+
     if (result?.status) {
       (await cookies()).set("token", result?.data?.token);
       (await cookies()).set("refreshToken", result?.data?.refreshToken);
@@ -64,27 +65,25 @@ export const getCurrentUser = async () => {
   }
 };
 export const logout = async () => {
-  
   (await cookies()).delete("token");
-  (await cookies()).delete("refresh-token");
-  
+  (await cookies()).delete("refreshToken");
 };
 
-// export const getNewToken = async () => {
-//   try {
-//     const res = await fetch(
-//       `${process.env.NEXT_PUBLIC_BASE_API}/auth/refresh-token`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: (await cookies()).get("refreshToken")!.value,
-//         },
-//       }
-//     );
+export const getNewToken = async () => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/auth/refresh-token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: (await cookies()).get("refreshToken")!.value,
+        },
+      }
+    );
 
-//     return res.json();
-//   } catch (error: any) {
-//     return Error(error);
-//   }
-// };
+    return res.json();
+  } catch (error: any) {
+    return Error(error);
+  }
+};

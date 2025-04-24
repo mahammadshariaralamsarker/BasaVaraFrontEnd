@@ -31,15 +31,18 @@ import { useForm } from "react-hook-form";
 import { formSchema } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import ImageUploader from "@/components/ui/core/ImageUploader";
-import { useState } from "react";
+import { use, useState } from "react";
 import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
 import { useUpdateListingByAdminMutation } from "@/redux/apis/admin.slice";
-
+ 
 export default function Page({ params }: { params: { id: string } }) {
   const [updateListingByAdmin] = useUpdateListingByAdminMutation();
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
-  const { id } = params;
+ 
+  console.log({params});
+  const { id } = use(params);
+  console.log(id);
   const router = useRouter();
 
   const form = useForm({

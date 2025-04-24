@@ -10,6 +10,9 @@ export const formSchema = z.object({
   price: z.coerce.number().positive({
     message: "Price must be a positive number.",
   }),
+  rent: z.coerce.number().positive({
+    message: "Rent must be a positive number.",
+  }),
   bedrooms: z.coerce.number().int().positive({
     message: "Bedrooms must be a positive integer.",
   }),

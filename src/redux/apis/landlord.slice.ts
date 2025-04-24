@@ -1,46 +1,35 @@
 // src/redux/api/landlordApi.ts
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-interface TProduct {
-  _id: string
-  title: string
-  location: string
-  description: string
-  rent: string
-  bedrooms: string
-  bathrooms: string
-  imageUrls: string[]
-  images?: string[]
-  LandlordID: string
-  area: string
-  houseStatus?: "available" | "rented"
-}
- 
-export const landlordApi = createApi({
-  reducerPath: "landlordApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000", 
-  }),
-  tagTypes: ["Product"],
+import { TProduct } from "@/lib/types/user";
+import { baseApi } from "../baseApi/baseApi";
+
+export const landlordApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getAllListings: builder.query<TProduct[], void>({
-      query: () => "/landlords/listings",
+      query: () => ({
+        url: "/landlords/listings",
+        method: "GET",
+      }),
       providesTags: ["Product"],
     }),
 
     getSingleListing: builder.query<TProduct, string>({
-      query: (id) => `/landlords/listings/${id}`,
+      query: (id) => ({
+        url: `/landlords/listings/${id}`,
+        method: "GET",
+      }),
       providesTags: (result, error, id) => [{ type: "Product", id }],
-    }), 
+    }),
 
-    createListing: builder.mutation({
-      query: ({  data }) => ({
-        url: "/landlords/listings", 
+    createListing: builder.mutation<void, { data: any }>({
+      query: ({ data }) => ({
+        url: "/landlords/listings",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["Product"],
     }),
-    
+
     updateListing: builder.mutation<void, { id: string; data: FormData }>({
       query: ({ id, data }) => ({
         url: `/landlords/listings/${id}`,
@@ -52,14 +41,17 @@ export const landlordApi = createApi({
 
     deleteListing: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/${id}`,
+        url: `/landlords/listings/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Product"],
     }),
 
     getMyPostings: builder.query<TProduct[], void>({
-      query: () => "/landlords/my-postings",
+      query: () => ({
+        url: "/landlords/my-postings",
+        method: "GET",
+      }),
       providesTags: ["Product"],
     }),
 

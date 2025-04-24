@@ -34,18 +34,21 @@ import ImageUploader from "@/components/ui/core/ImageUploader";
 import { useState } from "react";
 import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
 import { useCreateListingMutation } from "@/redux/apis/landlord.slice";
+import { useUser } from "@/context/UserContext";
 
 export default function Page() {
   const [createListing] = useCreateListingMutation();
-  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
-  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreview, setImagePreview] = useState<string[]>([]);
   const router = useRouter();
+  const { user } = useUser();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       location: "",
-      price: 0, 
+      price: 0,
+      rent: 0,
       bedrooms: 0,
       bathrooms: 0,
       area: 0,
@@ -53,28 +56,30 @@ export default function Page() {
     },
   });
 
-  const onSubmit = (values) => {
-    const formData = new FormData();
-    const stringifiedValues = Object.fromEntries(
-      Object.entries(values).map(([key, value]) => [key, String(value)])
-    );
-    console.log(stringifiedValues, "stringifiedValues");
+  const onSubmit = async (values: any) => {
+    try {
+      values.LandlordID = user?.id;
+      const formData = new FormData();
+      const stringifiedValues = Object.fromEntries(
+        Object.entries(values).map(([key, value]) => [key, String(value)])
+      );
 
-    formData.append("data", JSON.stringify(stringifiedValues));
-    imageFiles.forEach((file) => {
-      formData.append("images", file);
-    });
-
-    console.log("Form data:", formData);
-
-    createListing({ data: formData });
+      formData.append("data", JSON.stringify(stringifiedValues));
+      imageFiles.forEach((file) => {
+        formData.append("images", file);
+      });
+      await createListing({ data: formData }).unwrap();
+      router.push("/landlord/properties"); // update to your desired path
+    } catch (error) {
+      console.error("Failed to create listing:", error); 
+    }
   };
 
   return (
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>Property ADD </CardTitle>
+          <CardTitle>Property ADD</CardTitle>
           <CardDescription>
             Update the details of your property.
           </CardDescription>
@@ -96,6 +101,7 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="location"
@@ -109,6 +115,7 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="price"
@@ -129,6 +136,29 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+
+                {/* ✅ Rent Field */}
+                <FormField
+                  control={form.control}
+                  name="rent"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Security Deposit ($)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="500"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="status"
@@ -154,6 +184,7 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="bedrooms"
@@ -174,6 +205,7 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="bathrooms"
@@ -195,6 +227,7 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="area"
@@ -215,6 +248,7 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+
                 <div className="md:col-span-2">
                   <FormField
                     control={form.control}
