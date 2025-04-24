@@ -159,7 +159,7 @@ export default function Page() {
                   )}
                 />
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="status"
                   render={({ field }) => (
@@ -183,7 +183,7 @@ export default function Page() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <FormField
                   control={form.control}
