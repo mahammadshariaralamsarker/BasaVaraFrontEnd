@@ -9,7 +9,6 @@ import {
 export default function Page() {
   const { data, isLoading, error } = useGetAllUsersQuery({});
   const [deleteByAdmin] = useDeleteUserByAdminMutation();
-
   const handleDeleteUser = (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"

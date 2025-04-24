@@ -43,7 +43,6 @@ export default function Page() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const router = useRouter();
-
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {

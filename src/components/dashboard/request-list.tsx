@@ -17,7 +17,7 @@ const requests = [
       id: "1",
       title: "Modern Downtown Apartment",
     },
-    status: "Pending",
+    status: "pending",
     date: "2023-10-15",
     moveInDate: "2023-11-01",
   },
@@ -32,7 +32,7 @@ const requests = [
       id: "3",
       title: "Luxury Penthouse with View",
     },
-    status: "Pending",
+    status: "pending",
     date: "2023-10-14",
     moveInDate: "2023-11-15",
   },
@@ -47,7 +47,7 @@ const requests = [
       id: "5",
       title: "Downtown Loft",
     },
-    status: "Pending",
+    status: "pending",
     date: "2023-10-12",
     moveInDate: "2023-12-01",
   },
@@ -102,9 +102,9 @@ export default function RequestList({ limit = 10 }: { limit?: number }) {
                 <div className="mt-1 flex items-center gap-2">
                   <Badge
                     className={
-                      request.status === "Pending"
+                      request.status === "pending"
                         ? "bg-yellow-500 hover:bg-yellow-600"
-                        : request.status === "Approved"
+                        : request.status === "approved"
                           ? "bg-green-500 hover:bg-green-600"
                           : "bg-red-500 hover:bg-red-600"
                     }
@@ -114,7 +114,7 @@ export default function RequestList({ limit = 10 }: { limit?: number }) {
                   <span className="text-xs text-muted-foreground">Move-in: {request.moveInDate}</span>
                 </div>
               </div>
-              {request.status === "Pending" && (
+              {request.status === "pending" && (
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -134,7 +134,7 @@ export default function RequestList({ limit = 10 }: { limit?: number }) {
                   </Button>
                 </div>
               )}
-              {request.status !== "Pending" && (
+              {request.status !== "pending" && (
                 <Button variant="outline" size="sm">
                   View Details
                 </Button>

@@ -1,9 +1,9 @@
 import Image from "next/image";
+import Link from "next/link"; // You forgot to import this!
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bed, Bath, SquareIcon as SquareFeet } from "lucide-react";
 
-// Mock properties data
 const properties = [
   {
     id: "1",
@@ -70,7 +70,7 @@ export default function PropertyList({ limit = 10 }: { limit?: number }) {
       {displayProperties.map((property) => (
         <Card key={property.id} className="overflow-hidden">
           <CardContent className="p-0">
-            <a
+            <Link
               href={`/dashboard/properties/${property.id}`}
               className="flex flex-col md:flex-row"
             >
@@ -120,7 +120,7 @@ export default function PropertyList({ limit = 10 }: { limit?: number }) {
                   <p className="font-bold text-lg">${property.price}/month</p>
                 </div>
               </div>
-            </a>
+            </Link>
           </CardContent>
         </Card>
       ))}

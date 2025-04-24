@@ -1,80 +1,15 @@
 "use client"
 
+import {  useMemo } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bed, Bath, SquareIcon as SquareFeet } from "lucide-react"
-import { useMemo } from "react"
 
-// Mock properties data
-const properties = [
-  {
-    id: "1",
-    title: "Modern Downtown Apartment",
-    location: "123 Main St, New York, NY 10001",
-    price: 2500,
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 1200,
-    status: "Available",
-    image: "/placeholder.svg?height=600&width=800",
-  },
-  {
-    id: "2",
-    title: "Cozy Studio in Brooklyn",
-    location: "456 Park Ave, Brooklyn, NY 11201",
-    price: 1800,
-    bedrooms: 1,
-    bathrooms: 1,
-    area: 650,
-    status: "Rented",
-    image: "/placeholder.svg?height=600&width=800",
-  },
-  {
-    id: "3",
-    title: "Luxury Penthouse with View",
-    location: "789 Ocean Dr, Miami, FL 33139",
-    price: 4500,
-    bedrooms: 3,
-    bathrooms: 2.5,
-    area: 2200,
-    status: "Available",
-    image: "/placeholder.svg?height=600&width=800",
-  },
-  {
-    id: "4",
-    title: "Suburban Family Home",
-    location: "321 Oak St, Chicago, IL 60007",
-    price: 3200,
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 2800,
-    status: "Pending",
-    image: "/placeholder.svg?height=600&width=800",
-  },
-  {
-    id: "5",
-    title: "Downtown Loft",
-    location: "555 Market St, San Francisco, CA 94105",
-    price: 3800,
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 1500,
-    status: "Available",
-    image: "/placeholder.svg?height=600&width=800",
-  },
-  {
-    id: "6",
-    title: "Beachfront Condo",
-    location: "888 Beach Blvd, San Diego, CA 92109",
-    price: 3500,
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 1300,
-    status: "Available",
-    image: "/placeholder.svg?height=600&width=800",
-  },
-]
+import { useGetAllListingsQuery } from "@/redux/apis/landlord.slice"
+
+
 
 interface PropertyGridProps {
   searchQuery?: string
@@ -91,8 +26,19 @@ export default function PropertyGrid({
   searchQuery = "",
   filters = { status: "", minPrice: 0, maxPrice: 5000, bedrooms: "", bathrooms: "" },
 }: PropertyGridProps) {
+  const { data, isLoading, error } = useGetAllListingsQuery();
+   const properties = useMemo(() => (data ? data.data : []), [data]);
+   console.log(properties);
+
+  // console.log("Properties:", properties);
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
+      // Convert fields
+      const rent = parseFloat(property.rent)
+      const bedrooms = parseInt(property.bedrooms)
+      const bathrooms = parseFloat(property.bathrooms)
+      const status = property.houseStatus || "available"
+
       // Search filter
       if (
         searchQuery &&
@@ -103,32 +49,51 @@ export default function PropertyGrid({
       }
 
       // Status filter
-      if (filters.status && property.status !== filters.status) {
+      if (filters.status && status !== filters.status.toLowerCase()) {
+        if (filters.status.toLowerCase() === 'any') return true;
         return false
       }
 
       // Price range filter
-      if (property.price < filters.minPrice || property.price > filters.maxPrice) {
+      if (rent < filters.minPrice || rent > filters.maxPrice) {
         return false
       }
 
       // Bedrooms filter
-      if (filters.bedrooms && property.bedrooms < Number.parseInt(filters.bedrooms)) {
+      if (filters.bedrooms && bedrooms < parseInt(filters.bedrooms)) {
         return false
       }
 
       // Bathrooms filter
-      if (filters.bathrooms && property.bathrooms < Number.parseInt(filters.bathrooms)) {
+      if (filters.bathrooms && bathrooms < parseInt(filters.bathrooms)) {
         return false
       }
 
       return true
     })
-  }, [searchQuery, filters])
+  }, [properties, searchQuery, filters])
+
+  
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-lg text-muted-foreground">Loading properties...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-lg text-red-500">{error}</p>
+      </div>
+    )
+  }
 
   if (filteredProperties.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12">
         <p className="text-lg text-muted-foreground">No properties found matching your criteria.</p>
       </div>
     )
@@ -137,20 +102,23 @@ export default function PropertyGrid({
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {filteredProperties.map((property) => (
-        <Card key={property.id} className="overflow-hidden">
+        <Card key={property._id} className="overflow-hidden">
           <div className="relative aspect-video">
             <Badge
               className={`absolute right-2 top-2 z-10 ${
-                property.status === "Available"
+                property.houseStatus === "available"
                   ? "bg-green-500 hover:bg-green-600"
-                  : property.status === "Pending"
-                    ? "bg-yellow-500 hover:bg-yellow-600"
-                    : "bg-blue-500 hover:bg-blue-600"
+                  : "bg-blue-500 hover:bg-blue-600"
               }`}
             >
-              {property.status}
+              {property.houseStatus ?? "available"}
             </Badge>
-            <Image src={property.image || "/placeholder.svg"} alt={property.title} fill className="object-cover" />
+            <Image
+              src={property.imageUrls?.[0] || "/placeholder.svg"}
+              alt={property.title}
+              fill
+              className="object-cover"
+            />
           </div>
           <CardContent className="p-4">
             <h3 className="font-semibold">{property.title}</h3>
@@ -171,13 +139,13 @@ export default function PropertyGrid({
             </div>
           </CardContent>
           <CardFooter className="flex justify-between border-t p-4">
-            <p className="font-bold">${property.price}/month</p>
-            <a
-              href={`/dashboard/properties/${property.id}`}
+            <p className="font-bold">${property.rent}/month</p>
+            <Link
+              href={`/landlord/properties/${property._id}`}
               className="text-sm font-medium text-teal-600 hover:underline"
             >
               View Details
-            </a>
+            </Link>
           </CardFooter>
         </Card>
       ))}
