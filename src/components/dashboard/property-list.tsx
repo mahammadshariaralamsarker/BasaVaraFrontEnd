@@ -116,7 +116,7 @@ export default function PropertyList({ limit = 10 }: { limit?: number }) {
                   </div>
                 </div>
                 <div className="mt-auto pt-4">
-                  <p className="font-bold text-lg">${property.price}/month</p>
+                  <p className="font-bold text-lg">${property.rent}/month</p>
                 </div>
               </div>
             </Link>
