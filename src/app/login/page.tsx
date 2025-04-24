@@ -1,9 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useForm } from "react-hook-form";
-import Link from "next/link"; 
-import { loginUser } from "@/lib/services/AuthService";
-import { redirect } from "next/dist/server/api-utils";
+import Link from "next/link";
+
+import { useAppDispatch } from "@/redux/hooks";
+
+import { verifyToken } from "@/utils/verifyToken";
+import { JwtPayload } from "jsonwebtoken";
+import { setUser } from "@/redux/features/auth/authSlice";
+import { useLoginMutation } from "@/redux/features/auth/authApi";
+import { toast, Toaster } from "sonner";
+import { useRouter } from "next/navigation";
 
 type FormValues = {
   email: string;
@@ -11,6 +19,10 @@ type FormValues = {
 };
 
 const LoginPage = () => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [login] = useLoginMutation(); //ekta array return korbe
+
   const {
     register,
     handleSubmit,
@@ -18,22 +30,33 @@ const LoginPage = () => {
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
-    try {
-      const res = await loginUser(data);  
-      if (res?.status) {
-        alert("Login successful!");
-        window.location.href = "/dashboard"; 
-      } else {
-        alert("Login failed. Please try again.");
-      }
-       
-    } catch (err: any) {
-      console.error(err);
+    const userInfo = {
+      email: data.email,
+      password: data.password,
+    };
+
+    const res = await login(userInfo).unwrap();
+    const token = res.data.token;
+
+    // Save in localStorage for client-side access
+
+    const decoded = verifyToken(token) as JwtPayload & { role: string };
+    localStorage.setItem("token", token);
+    dispatch(setUser({ user: decoded, token }));
+
+    console.log(res);
+    if (res?.status) {
+      toast.success(res?.message);
+    } else {
+      toast.error(res?.message);
     }
+    // toast.success("Login Successfully");
+    router.push(`/${decoded?.role}`);
   };
 
   return (
     <div className="my-10 w-[90%] mx-auto">
+      <Toaster />
       <h1 className="text-center text-4xl mb-5 font-bold">
         Login <span className="text-teal-500">Here</span>
       </h1>

@@ -2,19 +2,20 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import Link from "next/link"; 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+// Removed duplicate UserData definition
 export type UserData = {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
   role: "tenant" | "landlord";
-  phone: number;
+  phone: string;
 };
-
 const RegisterPage = () => {
   const {
     register,
@@ -25,10 +26,12 @@ const RegisterPage = () => {
 
   const [success, setSuccess] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-
+  const router = useRouter();
   const onSubmit = async (data: UserData) => {
     const { confirmPassword, ...userData } = data;
-
+    
+    console.log(data);
+    
     try {
       const response = await fetch("http://localhost:5000/auth/register", {
         method: "POST",
@@ -45,9 +48,8 @@ const RegisterPage = () => {
 
       const result = await response.json();
       console.log("Server Response:", result);
-      window.location.href = "/";
       alert("Registration successful!");
-      setSuccess("Registration successful!"); 
+      setSuccess("Registration successful!");
       setErrorMsg("");
     } catch (err: any) {
       console.error("Registration Error:", err.message);
@@ -143,10 +145,10 @@ const RegisterPage = () => {
                 Phone
               </label>
               <input
-                type="number"
+                type="text"
                 {...register("phone", {
                   required: "Phone is required",
-                  valueAsNumber: true,
+                  // valueAsNumber: true,
                 })}
                 placeholder="Phone"
                 className="w-full p-3 border border-gray-300 rounded"
@@ -156,6 +158,37 @@ const RegisterPage = () => {
               )}
             </div>
 
+            {/* Address */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Address
+              </label>
+              <input
+                type="text"
+                {...register("address", { required: "Address is required" })}
+                placeholder="Address"
+                className="w-full p-3 border border-gray-300 rounded"
+              />
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address.message}</p>
+              )}
+            </div>
+
+            {/* City */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                City
+              </label>
+              <input
+                type="text"
+                {...register("city", { required: "City is required" })}
+                placeholder="City"
+                className="w-full p-3 border border-gray-300 rounded"
+              />
+              {errors.city && (
+                <p className="text-red-500 text-sm">{errors.city.message}</p>
+              )}
+            </div>
             {/* Password */}
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">
@@ -207,9 +240,7 @@ const RegisterPage = () => {
             </div>
 
             {/* Messages */}
-            {success && (
-              <p className="text-green-600 text-center">{success}</p>
-            )}
+            {success && <p className="text-green-600 text-center">{success}</p>}
             {errorMsg && <p className="text-red-600 text-center">{errorMsg}</p>}
 
             {/* Redirect to Login */}

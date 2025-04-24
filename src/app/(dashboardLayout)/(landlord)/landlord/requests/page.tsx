@@ -1,106 +1,113 @@
-import { Suspense } from "react"
-import { Button } from "@/components/ui/button"
-import { Search, SlidersHorizontal } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Skeleton } from "@/components/ui/skeleton"
-import RequestList from "@/components/requests/request-list"
-import RequestTable from "@/components/requests/request-table"
+"use client";
 
-export default function RequestsPage() {
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Rental Requests</h1>
-          <p className="text-muted-foreground">Manage tenant rental requests</p>
-        </div>
-      </div>
+import { Button } from "@/components/ui/button";
+import {
+  useGetRentalRequestsQuery,
+  useRespondToRequestMutation,
+} from "@/redux/apis/landlordslice";
 
-      <div className="flex flex-col gap-4 md:flex-row">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input type="search" placeholder="Search requests..." className="pl-8 w-full" />
-        </div>
-        <Button variant="outline" className="flex gap-2">
-          <SlidersHorizontal className="h-4 w-4" />
-          Filters
-        </Button>
-      </div>
+const RequestList = () => {
+  const { data: response, isLoading, error } = useGetRentalRequestsQuery();
+  const [respondToRequest, { isLoading: isResponding }] =
+    useRespondToRequestMutation();
 
-      <Tabs defaultValue="list" className="w-full">
-        <TabsList>
-          <TabsTrigger value="list">List View</TabsTrigger>
-          <TabsTrigger value="table">Table View</TabsTrigger>
-        </TabsList>
-        <TabsContent value="list" className="mt-4">
-          <Suspense fallback={<RequestListSkeleton />}>
-            <RequestList />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="table" className="mt-4">
-          <Suspense fallback={<RequestTableSkeleton />}>
-            <RequestTable />
-          </Suspense>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
-}
+  const requests = response?.data ?? [];
+  console.log("Rental Requests Data:", requests);
 
-function RequestListSkeleton() {
+  const handleResponse = async (
+    requestId: string,
+    status: "Approved" | "Rejected"
+  ) => {
+    try {
+      await respondToRequest({ requestId, data: { status } }).unwrap();
+    } catch (err) {
+      console.error("Failed to respond to request:", err);
+    }
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Something went wrong</div>;
+
   return (
     <div className="space-y-4">
-      {Array(5)
-        .fill(0)
-        .map((_, i) => (
-          <div key={i} className="rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div className="p-6">
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-[200px]" />
-                  <Skeleton className="h-4 w-[150px]" />
+      {requests.map((request) => (
+        <div
+          key={request._id}
+          className="rounded-lg border bg-card text-card-foreground shadow-sm"
+        >
+          <div className="p-6 space-y-2">
+            <div>
+              <p className="font-semibold">Tenant: {request.tenant?.name}</p>
+              <p className="text-sm text-muted-foreground">
+                {request.tenant?.email} | {request.tenant?.phone}
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold">
+                Property: {request.products?.title}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Rent: ${request.products?.rent} | Location:{" "}
+                {request.products?.location}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm">Message: {request.message}</p>
+              <p className="text-sm">
+                Payment:{" "}
+                <span className="text-muted-foreground">
+                  {request.paymentStatus ?? "N/A"}
+                </span>
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-sm">
+                Status:{" "}
+                <span className="font-medium text-primary">
+                  {request.status}
+                </span>
+              </p>
+              {request.status === "Pending" ? (
+                <div className="flex gap-2 mt-4">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleResponse(request._id, "Approved")}
+                    disabled={isResponding}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleResponse(request._id, "Rejected")}
+                    disabled={isResponding}
+                  >
+                    Reject
+                  </Button>
                 </div>
-                <div className="ml-auto flex gap-2">
-                  <Skeleton className="h-9 w-[80px]" />
-                  <Skeleton className="h-9 w-[80px]" />
+              ) : (
+                <div className="mt-4">
+                  <Button
+                    size="sm"
+                    variant={
+                      request.status === "Approved" ? "outline" : "destructive"
+                    }
+                    disabled
+                  >
+                    {request.status}
+                  </Button>
                 </div>
-              </div>
+              )}
             </div>
           </div>
-        ))}
-    </div>
-  )
-}
-
-function RequestTableSkeleton() {
-  return (
-    <div className="rounded-md border">
-      <div className="border-b px-4 py-3 bg-muted/50">
-        <div className="grid grid-cols-5 gap-4">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
         </div>
-      </div>
-      <div>
-        {Array(5)
-          .fill(0)
-          .map((_, i) => (
-            <div key={i} className="border-b px-4 py-4">
-              <div className="grid grid-cols-5 gap-4">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-              </div>
-            </div>
-          ))}
-      </div>
+      ))}
     </div>
-  )
-}
+  );
+};
+
+export default RequestList;

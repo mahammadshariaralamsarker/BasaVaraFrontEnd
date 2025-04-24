@@ -1,36 +1,51 @@
-'use client';
+"use client";
 
-import { useUser } from '@/context/UserContext';
-import { logout } from '@/lib/services/AuthService';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/redux/features/auth/authSlice";
+import { baseApi } from "@/redux/apis/baseApi";
 
 const Navbar = () => {
-  const user = useUser();
-  const navigate = useRouter();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
+  const user = useSelector((state) => state.auth.user);
 
   const handleLogout = async () => {
-    await logout();
-    user.setUser(null);
-    navigate.push('/login');
+    dispatch(logout());
+    dispatch(baseApi.util.resetApiState());
+    localStorage.removeItem("token");
+    router.push("/login");
   };
-  const dashboard = async () => {
-    navigate.push(`/${user?.user?.role}`);
+
+  const dashboard = () => {
+    if (user?.role) {
+      router.push(`/${user.role}`);
+    }
   };
+
+  const navClass = (path: string) =>
+    pathname === path
+      ? "font-bold text-blue-[#14B8A6]  px-2"
+      : "hover:bg-black hover:text-white transition duration-200 rounded-md px-2 ";
 
   const menuItems = (
     <>
-      <li className="hover:text-gray-600">
-        <Link href="/">Home</Link>
+      <li className={navClass("/home")}>
+        <Link href="/home">Home</Link>
       </li>
-      <li className="hover:text-gray-600">
+      <li className={navClass("/tenants")}>
+        <Link href="/tenants">Tenants</Link>
+      </li>
+      <li className={navClass("/about")}>
         <Link href="/about">About Us</Link>
       </li>
-      <li className="hover:text-gray-600">
+      <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
-      </li>
-      <li onClick={dashboard} className="hover:text-gray-600">
-        <Link href="/dashboard">Dashboard</Link>
+      </li> 
+      <li onClick={dashboard} className={navClass("/*")}>
+        Dashboard
       </li>
     </>
   );
@@ -40,7 +55,6 @@ const Navbar = () => {
       {/* Logo & Mobile Menu */}
       <div className="flex items-center">
         <div className="relative lg:hidden">
-          {/* Mobile dropdown */}
           <div
             tabIndex={0}
             role="button"
@@ -81,10 +95,10 @@ const Navbar = () => {
         <ul className="flex space-x-6 text-gray-800">{menuItems}</ul>
       </div>
 
-      {/* Login / Logout button */}
-      <h1>{user?.user?.email}</h1>
+      {/* User and Auth Button */}
+      <h1>{user?.email}</h1>
       <div className="flex items-center">
-        {user?.user?.email ? (
+        {user?.email ? (
           <button
             onClick={handleLogout}
             className="border border-red-500 text-red-500 px-5 py-2 rounded-full hover:bg-red-500 hover:text-black transition duration-200"

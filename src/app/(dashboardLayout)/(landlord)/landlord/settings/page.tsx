@@ -23,7 +23,6 @@ const profileFormSchema = z.object({
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 characters.",
   }),
-  company: z.string().optional(),
   bio: z.string().optional(),
 })
 
@@ -55,7 +54,6 @@ export default function SettingsPage() {
       name: "John Doe",
       email: "john.doe@example.com",
       phone: "(123) 456-7890",
-      company: "Acme Properties",
       bio: "Property manager with over 10 years of experience.",
     },
   })
@@ -168,19 +166,7 @@ export default function SettingsPage() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={profileForm.control}
-                      name="company"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Company</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    
                     <FormField
                       control={profileForm.control}
                       name="bio"
