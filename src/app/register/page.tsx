@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link"; 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -29,17 +29,20 @@ const RegisterPage = () => {
   const router = useRouter();
   const onSubmit = async (data: UserData) => {
     const { confirmPassword, ...userData } = data;
-    
+
     console.log(data);
-    
+
     try {
-      const response = await fetch("http://localhost:5000/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+      const response = await fetch(
+        "https://basa-vara-server.vercel.app/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -51,6 +54,7 @@ const RegisterPage = () => {
       alert("Registration successful!");
       setSuccess("Registration successful!");
       setErrorMsg("");
+      //Redirect to home page
     } catch (err: any) {
       console.error("Registration Error:", err.message);
       setErrorMsg(err.message);

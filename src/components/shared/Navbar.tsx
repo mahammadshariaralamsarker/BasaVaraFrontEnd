@@ -43,7 +43,7 @@ const Navbar = () => {
       </li>
       <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
-      </li> 
+      </li>
       <li onClick={dashboard} className={navClass("/dashboard*")}>
         Dashboard
       </li>

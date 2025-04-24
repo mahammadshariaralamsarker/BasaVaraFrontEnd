@@ -21,8 +21,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Bed, Bath, SquareIcon as SquareFeet, MapPin } from "lucide-react";
-import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 export default function PropertyDetail() {
   const {
@@ -38,6 +39,9 @@ export default function PropertyDetail() {
 
   const [submitRentalRequest, { isLoading: isSubmitting }] =
     useSubmitRentalRequestMutation();
+
+  const user = useSelector((state) => state.auth.user); // ✅ adjust based on your store
+  console.log(user);
 
   if (isLoading) return <p className="text-center mt-10">Loading...</p>;
   if (isError || !data?.data)
@@ -57,19 +61,26 @@ export default function PropertyDetail() {
         products: propertyId,
         message: formValues.message,
       };
-      console.log(payload);
 
       const res = await submitRentalRequest(payload).unwrap();
-      console.log(res);
+
+      if (res?.success === false) {
+        toast.warning(res.message || "Something went wrong.");
+        return;
+      }
 
       setRequestSent(true);
       setRequestModalOpen(false);
       toast.success("Rental request sent!");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      toast.error("Failed to send request.");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const fallbackMessage = "Failed to send request. Please try again.";
+      const errorMessage = err?.data?.message || fallbackMessage;
+
+      toast.error(errorMessage);
     }
   };
+
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold">{property.title}</h1>
@@ -187,22 +198,23 @@ export default function PropertyDetail() {
             </div>
           </div>
 
-          {property.houseStatus === "rented" ? (
-            <Button disabled className="w-full mt-4 bg-gray-400">
-              Already Rented
-            </Button>
-          ) : requestSent ? (
-            <Button disabled className="w-full mt-4 bg-gray-400">
-              Request Sent
-            </Button>
-          ) : (
-            <Button
-              onClick={() => setRequestModalOpen(true)}
-              className="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white"
-            >
-              Request Rental
-            </Button>
-          )}
+          {user?.role === "tenant" &&
+            (property.houseStatus === "rented" ? (
+              <Button disabled className="w-full mt-4 bg-gray-400">
+                Already Rented
+              </Button>
+            ) : requestSent ? (
+              <Button disabled className="w-full mt-4 bg-gray-400">
+                Request Sent
+              </Button>
+            ) : (
+              <Button
+                onClick={() => setRequestModalOpen(true)}
+                className="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white"
+              >
+                Request Rental
+              </Button>
+            ))}
 
           {/* Rental Button
           {rentalResponse?.houseStatus === "rented" ? (
