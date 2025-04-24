@@ -27,7 +27,7 @@ const Navbar = () => {
 
   const navClass = (path: string) =>
     pathname === path
-      ? "font-bold text-blue-[#14B8A6]  px-2"
+      ? "font-bold text-[#14B8A6]   "
       : "hover:bg-black hover:text-white transition duration-200 rounded-md px-2 ";
 
   const menuItems = (
@@ -44,7 +44,7 @@ const Navbar = () => {
       <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
       </li> 
-      <li onClick={dashboard} className={navClass("/*")}>
+      <li onClick={dashboard} className={navClass(" /*")}>
         Dashboard
       </li>
     </>
