@@ -29,9 +29,6 @@ const Navbar = () => {
       <li className="hover:text-gray-600">
         <Link href="/contact">Contact Us</Link>
       </li>
-      <li className="hover:text-gray-600">
-        <Link href="/support">Support</Link>
-      </li>
       <li onClick={dashboard} className="hover:text-gray-600">
         <Link href="/dashboard">Dashboard</Link>
       </li>

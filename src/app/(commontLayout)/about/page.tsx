@@ -21,7 +21,7 @@ const AboutUs = () => {
 
   return (
     <div>
-      <section className="w-[90%] mx-auto my-10 px-6 md:px-12 lg:px-24">
+      <section className="w-[90%] mx-auto my-10 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-gray-800 mb-5">
             About <span className="text-teal-500">Us</span>
@@ -90,9 +90,9 @@ const AboutUs = () => {
           </div>
         </div>
       </section>
-      <section className="bg-gray-100 w-full">
+      <section className="bg-gray-100 w-full ">
         {/* Team Section */}
-        <div className="py-32 max-w-7xl mx-auto">
+        <div className="w-[90%] py-32 max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-gray-800 text-center mb-8">
             Meet Our <span className="text-teal-500">Dynamic Team</span>
           </h2>
