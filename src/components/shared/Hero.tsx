@@ -127,7 +127,7 @@ export default function HeroSection() {
                 </span>
               </div>
               <a
-                href={`/rental/${house.id}`}
+                href={`/rentals/${house.id}`}
                 className="mt-4 inline-block border border-teal-500 text-teal-500 px-5 py-2 rounded-md hover:bg-teal-500 hover:text-black transition duration-200"
               >
                 View Details
