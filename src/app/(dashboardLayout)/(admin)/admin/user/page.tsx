@@ -5,6 +5,7 @@ import {
   useDeleteUserByAdminMutation,
   useGetAllUsersQuery,
 } from "@/redux/apis/admin.slice";
+import LoadingPage from "@/app/loading";
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllUsersQuery({});
@@ -20,7 +21,7 @@ export default function Page() {
   };
 
   if (isLoading)
-    return <div className="text-center py-8">Loading users...</div>;
+    return <div className="text-center py-8"><LoadingPage/></div>;
   if (error)
     return (
       <div className="text-center py-8 text-red-500">Error loading users</div>

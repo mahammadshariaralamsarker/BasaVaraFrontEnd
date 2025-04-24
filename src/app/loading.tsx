@@ -1,15 +1,10 @@
-import Image from "next/image";
-
-const LoadingPage = () => {
+export const LoadingPage = () => {
   return (
     <div className="w-[90%] mx-auto">
-      <Image
-        src="https://i.stack.imgur.com/hzk6C.gif"
-        width={500}
-        height={500}
-        alt="loading"
-        className="w-96 mx-auto"
-      />
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-300 border-t-blue-500"></div>
+        <p className="mt-4 text-lg text-gray-600 font-medium">Loading</p>
+      </div>
     </div>
   );
 };

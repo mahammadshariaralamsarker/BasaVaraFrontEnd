@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/auth/authSlice";
@@ -9,13 +9,14 @@ import { baseApi } from "@/redux/apis/baseApi";
 const Navbar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const user = useSelector((state) => state.auth.user); // ✅ adjust based on your store
+  const pathname = usePathname();
+  const user = useSelector((state) => state.auth.user);
 
   const handleLogout = async () => {
-    dispatch(logout()); // ✅ clear Redux state
+    dispatch(logout());
     dispatch(baseApi.util.resetApiState());
     localStorage.removeItem("token");
-    router.push("/login"); // ✅ redirect to login
+    router.push("/login");
   };
 
   const dashboard = () => {
@@ -24,24 +25,26 @@ const Navbar = () => {
     }
   };
 
+  const navClass = (path: string) =>
+    pathname === path
+      ? "font-bold text-blue-[#14B8A6]  px-2"
+      : "hover:bg-black hover:text-white transition duration-200 rounded-md px-2 ";
+
   const menuItems = (
     <>
-      <li className="hover:text-gray-600">
+      <li className={navClass("/home")}>
         <Link href="/home">Home</Link>
       </li>
-      <li className="hover:text-gray-600">
+      <li className={navClass("/tenants")}>
         <Link href="/tenants">Tenants</Link>
       </li>
-      <li className="hover:text-gray-600">
+      <li className={navClass("/about")}>
         <Link href="/about">About Us</Link>
       </li>
-      <li className="hover:text-gray-600">
+      <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
-      </li>
-      <li className="hover:text-gray-600">
-        <Link href="/support">Support</Link>
-      </li>
-      <li onClick={dashboard} className="hover:text-gray-600 cursor-pointer">
+      </li> 
+      <li onClick={dashboard} className={navClass("/*")}>
         Dashboard
       </li>
     </>

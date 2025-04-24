@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import LoadingPage from "@/app/loading";
 import {
   useDeleteListingByAdminMutation,
   useGetAllListingsQuery,
@@ -11,7 +12,7 @@ export default function Page() {
   const [deleteByAdmin] = useDeleteListingByAdminMutation();
 
   if (isLoading)
-    return <div className="text-center py-8">Loading listings...</div>;
+    return <div className="text-center py-8"><LoadingPage/></div>;
   if (error)
     return (
       <div className="text-center py-8 text-red-500">
