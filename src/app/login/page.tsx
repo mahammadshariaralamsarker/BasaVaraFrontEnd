@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -6,11 +7,11 @@ import Link from "next/link";
 import { useAppDispatch } from "@/redux/hooks";
 
 import { verifyToken } from "@/utils/verifyToken";
+import { JwtPayload } from "jsonwebtoken";
 import { setUser } from "@/redux/features/auth/authSlice";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
 
 type FormValues = {
   email: string;
@@ -39,8 +40,7 @@ const LoginPage = () => {
 
     // Save in localStorage for client-side access
     localStorage.setItem("token", token);
-
-    const decoded = verifyToken(token);
+    const decoded = verifyToken(token) as JwtPayload & { role: string };
     localStorage.setItem("token", token);
     dispatch(setUser({ user: decoded, token }));
 

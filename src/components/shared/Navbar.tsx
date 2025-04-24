@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/auth/authSlice";
+import { baseApi } from "@/redux/apis/baseApi";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     dispatch(logout()); // ✅ clear Redux state
+    dispatch(baseApi.util.resetApiState());
     localStorage.removeItem("token");
     router.push("/login"); // ✅ redirect to login
   };

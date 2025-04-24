@@ -96,7 +96,7 @@ const MyRequestsPage = () => {
                   }
                   onClick={() => handleSubmit(request._id)}
                 >
-                  Pay Nows
+                  Pay Now
                 </Button>
               </div>
             </div>

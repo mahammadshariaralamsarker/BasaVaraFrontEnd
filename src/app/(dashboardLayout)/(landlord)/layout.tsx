@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Home, Building2, ClipboardList, Settings, LogOut, User, ChevronDown } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import Link from "next/link"
 
 export default function DashboardLayout({
   children,
@@ -105,10 +106,10 @@ export default function DashboardLayout({
                   {navigation.map((item) => (
                     <SidebarMenuItem key={item.href}>
                       <SidebarMenuButton asChild isActive={item.isActive}>
-                        <a href={item.href}>
+                        <Link href={item.href}>
                           <item.icon className="h-4 w-4" />
                           <span>{item.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -122,10 +123,10 @@ export default function DashboardLayout({
                   {settings.map((item) => (
                     <SidebarMenuItem key={item.href}>
                       <SidebarMenuButton asChild isActive={item.isActive}>
-                        <a href={item.href}>
+                        <Link href={item.href}>
                           <item.icon className="h-4 w-4" />
                           <span>{item.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -149,16 +150,16 @@ export default function DashboardLayout({
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <a href="/landlord/profile" className="flex cursor-pointer items-center">
+                  <Link href="/landlord/profile" className="flex cursor-pointer items-center">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
-                  </a>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <a href="/landlord/settings" className="flex cursor-pointer items-center">
+                  <Link href="/landlord/settings" className="flex cursor-pointer items-center">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
-                  </a>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="flex cursor-pointer items-center text-red-500">

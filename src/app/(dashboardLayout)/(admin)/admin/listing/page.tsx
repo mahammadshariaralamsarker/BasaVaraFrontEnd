@@ -1,10 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useGetAllListingsQuery } from "@/redux/apis/admin.slice";
+import {
+  useDeleteListingByAdminMutation,
+  useGetAllListingsQuery,
+} from "@/redux/apis/admin.slice";
 import Image from "next/image";
-import React from "react";
+import Link from "next/link";
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllListingsQuery({});
+  const [deleteByAdmin] = useDeleteListingByAdminMutation();
 
   if (isLoading)
     return <div className="text-center py-8">Loading listings...</div>;
@@ -16,7 +21,15 @@ export default function Page() {
     );
   if (!data?.data?.length)
     return <div className="text-center py-8">No listings available</div>;
-
+  console.log(data.data);
+  const handleDeleteListing = (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this Landlord?"
+    );
+    if (confirmDelete) {
+      deleteByAdmin(id);
+    }
+  };
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
@@ -54,7 +67,7 @@ export default function Page() {
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Image
-                    src={listing.imageUrls || "/placeholder.jpg"}
+                    src={listing.imageUrls[0]?.trim() || "/placeholder.jpg"}
                     alt="Property"
                     className="border-2 border-gray-300 rounded-lg"
                     width={64}
@@ -80,15 +93,15 @@ export default function Page() {
                   <div className="text-gray-900">{listing.bedrooms}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
+                  <Link
+                    href={`/admin/listing/${listing._id}`}
                     className="text-blue-600 hover:text-blue-900 mr-4"
-                    onClick={() => handleUpdate(listing._id)}
                   >
                     Update
-                  </button>
+                  </Link>
                   <button
                     className="text-red-600 hover:text-red-900"
-                    onClick={() => handleDelete(listing._id)}
+                    onClick={() => handleDeleteListing(listing._id)}
                   >
                     Delete
                   </button>
@@ -104,14 +117,4 @@ export default function Page() {
       </div>
     </div>
   );
-
-  function handleUpdate(id: string) {
-    console.log("Update listing with ID:", id);
-    // Add your update logic here
-  }
-
-  function handleDelete(id: string) {
-    console.log("Delete listing with ID:", id);
-    // Add your delete logic here
-  }
 }

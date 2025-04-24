@@ -4,15 +4,14 @@
 import {
   useGetMyOrdersQuery,
   useVerifyPaymentQuery,
+  useMakePaymentMutation,
 } from "@/redux/apis/tenant.slice";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const PaymentVerificationPage = () => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order_id");
-
-  const router = useRouter();
 
   const {
     data: verificationData,
@@ -24,11 +23,27 @@ const PaymentVerificationPage = () => {
     data: ordersData,
     error: ordersError,
     isLoading: isOrdersLoading,
-  } = useGetMyOrdersQuery(undefined);
+  } = useGetMyOrdersQuery(undefined, {
+    pollingInterval: 3000,
+  });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [makePayment, { isLoading: isPaying }] = useMakePaymentMutation();
+
   const handleRetryPayment = async (order: any) => {
-    router.push(`/order/pay?transactionId=${order.transaction?.id}`);
+    if (!order?.tenantRequest) {
+      alert("Missing tenant request ID.");
+      return;
+    }
+
+    try {
+      const response = await makePayment(order.tenantRequest).unwrap();
+      if (response?.data) {
+        window.open(response.data, "_blank");
+      }
+    } catch (error) {
+      console.error("Failed to resume payment", error);
+      alert("Failed to resume payment.");
+    }
   };
 
   const getVerificationMessage = () => {
@@ -88,7 +103,7 @@ const PaymentVerificationPage = () => {
       </p>
       <p>
         <strong>Paid At:</strong>{" "}
-        {new Date(data.date_time).toLocaleString() || "Invalid Date"}
+        {data.date_time ? new Date(data.date_time).toLocaleString() : "N/A"}
       </p>
     </div>
   );
@@ -97,7 +112,7 @@ const PaymentVerificationPage = () => {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Your Payments</h1>
 
-      {orderId && (
+      {orderId ? (
         <div className="mb-10 bg-blue-50 p-6 rounded-xl border border-blue-200 shadow-sm">
           <h2 className="text-xl font-semibold mb-3 text-blue-700">
             Payment Verification
@@ -112,6 +127,10 @@ const PaymentVerificationPage = () => {
             verificationData?.data &&
             getVerificationMessage()}
         </div>
+      ) : (
+        <p className="text-gray-500 italic">
+          No payment was attempted. Please try again.
+        </p>
       )}
 
       <div>
@@ -172,17 +191,19 @@ const PaymentVerificationPage = () => {
                     </p>
                   </div>
 
-                  {!isPaid &&
-                    (bankStatus === "Cancel" || bankStatus === "Failed") && (
-                      <button
-                        onClick={() => handleRetryPayment(order)}
-                        className="bg-gray-900 hover:bg-gray-700 text-white font-semibold px-5 py-2 rounded-lg"
-                      >
-                        {bankStatus === "Cancelled"
-                          ? "Retry Payment"
-                          : "Resume Payment"}
-                      </button>
-                    )}
+                  {order.status !== "Paid" && (
+                    <button
+                      onClick={() => handleRetryPayment(order)}
+                      disabled={isPaying}
+                      className="bg-gray-900 hover:bg-gray-700 text-white font-semibold px-5 py-2 rounded-lg"
+                    >
+                      {order.status === "Cancelled"
+                        ? "Retry Payment"
+                        : order.status === "Pending"
+                        ? "Resume Payment"
+                        : "Complete Payment"}
+                    </button>
+                  )}
                 </div>
               );
             })}

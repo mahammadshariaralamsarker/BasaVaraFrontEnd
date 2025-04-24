@@ -28,20 +28,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
-
-import { useRouter } from "next/navigation";
-
-import { useState } from "react";
-
 import { formSchema } from "@/lib/constants";
-import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
+import { useParams, useRouter } from "next/navigation";
 import ImageUploader from "@/components/ui/core/ImageUploader";
-import { useCreateListingMutation } from "@/redux/apis/landlordslice";
+import { useState } from "react";
+import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
+import { useUpdateListingByAdminMutation } from "@/redux/apis/admin.slice";
 
 export default function Page() {
-  const [createListing] = useCreateListingMutation();
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreview, setImagePreview] = useState<string[]>([]);
+  const [updateListingByAdmin] = useUpdateListingByAdminMutation();
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
+
+  const params = useParams(); // Returns: { id: '680a265e532f50d81f2e8ac7' }
+  const id = params.id;
+
+  console.log("Property ID:", id);
+
   const router = useRouter();
 
   const form = useForm({
@@ -50,7 +53,7 @@ export default function Page() {
       title: "",
       location: "",
       price: 0,
-      rent: 0,
+      status: "Available",
       bedrooms: 0,
       bathrooms: 0,
       area: 0,
@@ -58,30 +61,38 @@ export default function Page() {
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = async (values: any) => {
-    try {
-      const formData = new FormData();
-      const stringifiedValues = Object.fromEntries(
-        Object.entries(values).map(([key, value]) => [key, String(value)])
-      );
+  interface FormValues {
+    title: string;
+    location: string;
+    price: number;
+    status: string;
+    bedrooms: number;
+    bathrooms: number;
+    area: number;
+    description: string;
+  }
 
-      formData.append("data", JSON.stringify(stringifiedValues));
-      imageFiles.forEach((file) => {
-        formData.append("images", file);
-      });
-      await createListing({ data: formData }).unwrap();
-      router.push("/landlord/properties"); // update to your desired path
-    } catch (error) {
-      console.error("Failed to create listing:", error);
-    }
+  const onSubmit = (values: FormValues) => {
+    const formData = new FormData();
+    const stringifiedValues = Object.fromEntries(
+      Object.entries(values).map(([key, value]) => [key, String(value)])
+    );
+
+    formData.append("data", JSON.stringify(stringifiedValues));
+    imageFiles.forEach((file: File) => {
+      formData.append("images", file);
+    });
+    console.log("Inside on submit ");
+    console.log("id and formdata ", id, formData);
+    updateListingByAdmin({ id, data: formData });
+    router.push("/admin/listing");
   };
 
   return (
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>Property ADD</CardTitle>
+          <CardTitle>Property Update </CardTitle>
           <CardDescription>
             Update the details of your property.
           </CardDescription>
@@ -103,7 +114,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="location"
@@ -117,7 +127,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="price"
@@ -138,29 +147,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-
-                {/* ✅ Rent Field */}
-                <FormField
-                  control={form.control}
-                  name="rent"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Security Deposit ($)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="500"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(e.target.valueAsNumber)
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="status"
@@ -186,7 +172,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="bedrooms"
@@ -207,7 +192,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="bathrooms"
@@ -229,7 +213,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="area"
@@ -250,7 +233,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-
                 <div className="md:col-span-2">
                   <FormField
                     control={form.control}
