@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/providers/Providers";
 import Navbar from "@/components/shared/Navbar";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Next Auth",

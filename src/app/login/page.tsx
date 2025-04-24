@@ -10,7 +10,7 @@ import { verifyToken } from "@/utils/verifyToken";
 import { JwtPayload } from "jsonwebtoken";
 import { setUser } from "@/redux/features/auth/authSlice";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
 
 type FormValues = {
@@ -39,17 +39,24 @@ const LoginPage = () => {
     const token = res.data.token;
 
     // Save in localStorage for client-side access
-    localStorage.setItem("token", token);
+
     const decoded = verifyToken(token) as JwtPayload & { role: string };
     localStorage.setItem("token", token);
     dispatch(setUser({ user: decoded, token }));
 
-    toast.success("Login Successfully");
+    console.log(res);
+    if (res?.status) {
+      toast.success(res?.message);
+    } else {
+      toast.error(res?.message);
+    }
+    // toast.success("Login Successfully");
     router.push(`/${decoded?.role}`);
   };
 
   return (
     <div className="my-10 w-[90%] mx-auto">
+      <Toaster />
       <h1 className="text-center text-4xl mb-5 font-bold">
         Login <span className="text-teal-500">Here</span>
       </h1>
