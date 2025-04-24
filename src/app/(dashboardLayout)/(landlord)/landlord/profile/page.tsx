@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
 import { Building2, Mail, Phone, MapPin, Upload, User, Calendar, Shield } from "lucide-react"
+import { getCurrentUser } from "@/lib/services/AuthService"
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
@@ -51,8 +52,15 @@ export default function ProfilePage() {
     },
   })
 
+  getCurrentUser().then((user) => {
+    console.log("Current User:", user)
+  });
+
   function onSubmit(values: z.infer<typeof profileFormSchema>) {
     setIsSubmitting(true)
+
+    
+    
 
     // Simulate API call
     setTimeout(() => {
