@@ -15,7 +15,7 @@ export default function DashboardLayout({
   return (
     <RoleGuard allowedRole="tenant">
       <div className="min-h-screen my-2">
-        <div className="flex justify-between">
+        <div className="flex min-h-screen w-screen">
           <div className="w-[20%]">
             <TenantSidebar />
           </div>

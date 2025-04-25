@@ -7,7 +7,7 @@ import {
   useMakePaymentMutation,
 } from "@/redux/apis/tenant.slice";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+
 
 const PaymentVerificationPage = () => {
   const searchParams = useSearchParams();

@@ -8,6 +8,7 @@ import {
   useGetMyRequestsQuery,
   useMakePaymentMutation,
 } from "@/redux/apis/tenant.slice";
+import LoadingPage from "@/app/loading";
 
 const MyRequestsPage = () => {
   // const token = useSelector((state: any) => state.auth.token);
@@ -16,7 +17,7 @@ const MyRequestsPage = () => {
 
   const [makePayment, { isLoading: isPaying }] = useMakePaymentMutation();
 
-  if (isLoading) return <div className="p-4">Loading...</div>;
+  if (isLoading) return <LoadingPage />;
 
   const handleSubmit = async (tenantRequestId: string) => {
     console.log(tenantRequestId);

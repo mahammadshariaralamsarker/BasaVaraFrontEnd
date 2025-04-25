@@ -23,6 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Bed, Bath, SquareIcon as SquareFeet, MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import LoadingPage from "@/app/loading";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function PropertyDetail() {
   const {
@@ -37,6 +39,9 @@ export default function PropertyDetail() {
   const [activeImage, setActiveImage] = useState(0);
   const [requestModalOpen, setRequestModalOpen] = useState(false);
   const [requestSent, setRequestSent] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = useSelector((state: any) => state.auth.user);
 
   const [submitRentalRequest, { isLoading: isSubmitting }] =
     useSubmitRentalRequestMutation();
@@ -244,10 +249,19 @@ export default function PropertyDetail() {
             <div>
               <Label>Message</Label>
               <Input
+                className="my-1"
                 type="text"
-                placeholder="Optional message to landlord"
-                {...register("message")}
+                placeholder="Message to landlord (minimum 10 words)"
+                {...register("message", {
+                  required: "Message is required",
+                  validate: (value) =>
+                    value.trim().split(/\s+/).length >= 10 ||
+                    "Message must be at least 10 words",
+                })}
               />
+              {errors.message && (
+                <p className="text-sm text-red-500">{errors.message.message}</p>
+              )}
             </div>
             <DialogFooter>
               <Button

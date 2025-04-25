@@ -1,6 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,15 +20,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
-import { formSchema } from "@/lib/constants";
+
 import { useRouter, useParams } from "next/navigation";
-import ImageUploader from "@/components/ui/core/ImageUploader";
-import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
+
 import {
   useGetSingleListingQuery,
   useUpdateListingMutation,
 } from "@/redux/apis/landlordslice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Page() {
   const router = useRouter();
@@ -38,8 +36,7 @@ export default function Page() {
 
   const [updateListing] = useUpdateListingMutation();
 
-
-  const { data, isLoading, isError } = useGetSingleListingQuery(id);
+  const { data } = useGetSingleListingQuery(id);
 
   const form = useForm({
     defaultValues: {
@@ -71,9 +68,7 @@ export default function Page() {
 
       formData.append("data", JSON.stringify(stringifiedValues));
 
-
-
-      console.log('data from up',values);
+      console.log("data from up", values);
       await updateListing({
         payload: {
           id, // make sure this is available in your component
@@ -91,7 +86,9 @@ export default function Page() {
       <Card>
         <CardHeader>
           <CardTitle>Property Update</CardTitle>
-          <CardDescription>Update the details of your property.</CardDescription>
+          <CardDescription>
+            Update the details of your property.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -133,7 +130,7 @@ export default function Page() {
                       <FormLabel>Monthly Rent ($)</FormLabel>
                       <FormControl>
                         <Input
-                          type="text"
+                          type="number"
                           placeholder="1500"
                           {...field}
                           onChange={(e) =>
@@ -229,19 +226,6 @@ export default function Page() {
                     )}
                   />
                 </div>
-
-                {/* <div className="md:col-span-2">
-                  <FormLabel>Property Images</FormLabel>
-                  <ImagePreviewer
-                    setImageFiles={setImageFiles}
-                    imagePreview={imagePreview}
-                    setImagePreview={setImagePreview}
-                  />
-                  <ImageUploader
-                    setImageFiles={setImageFiles}
-                    setImagePreview={setImagePreview}
-                  />
-                </div> */}
               </div>
 
               <CardFooter className="flex justify-end gap-2 px-0">
