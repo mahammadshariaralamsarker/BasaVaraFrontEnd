@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/auth/authSlice";
 import { baseApi } from "@/redux/apis/baseApi";
 import { RootState } from "@/redux/store";
+import { toast, ToastContainer } from "react-toastify";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -17,13 +18,14 @@ const Navbar = () => {
     email?: string;
   }
 
-  const user = useSelector((state: RootState) => state.auth.user) as User;
+  const user = useSelector<RootState, User | null>((state) => state.auth.user);
 
-  const handleLogout = async () => {
+const handleLogout = async () => {
     dispatch(logout());
     dispatch(baseApi.util.resetApiState());
     localStorage.removeItem("token");
     router.push("/login");
+    toast.success("Logged out successfully!");
   };
 
   const dashboard = () => {
@@ -61,6 +63,7 @@ const Navbar = () => {
   return (
     <div className="w-[90%] mx-auto flex items-center justify-between bg-white border-b py-4">
       {/* Logo & Mobile Menu */}
+      <ToastContainer />
       <div className="flex items-center">
         <div className="relative lg:hidden">
           <div

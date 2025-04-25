@@ -18,6 +18,8 @@ export type UserData = {
   confirmPassword: string;
   role: "tenant" | "landlord";
   phone: string;
+  address: string; // Added address field
+  city: string; // Added city field
 };
 const RegisterPage = () => {
   const {
@@ -26,9 +28,7 @@ const RegisterPage = () => {
     watch,
     formState: { errors },
   } = useForm<UserData>();
-
-  const [success, setSuccess] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+ 
   const router = useRouter();
   const onSubmit = async (data: UserData) => {
     const { confirmPassword, ...userData } = data;
@@ -61,14 +61,13 @@ const RegisterPage = () => {
      
       logout();
      
-      setErrorMsg("");
+     
     } catch (err: any) {
       toast.error(err.message, {
         position: "top-center",
         autoClose: 5000,
       });
-      setErrorMsg(err.message);
-      setSuccess("");
+       
     }
   };
 
@@ -184,7 +183,7 @@ const RegisterPage = () => {
                 placeholder="Address"
                 className="w-full p-3 border border-gray-300 rounded"
               />
-              {errors.address && (
+              {errors?.address && (
                 <p className="text-red-500 text-sm">{errors.address.message}</p>
               )}
             </div>
@@ -254,9 +253,7 @@ const RegisterPage = () => {
               </button>
             </div>
 
-            {/* Messages */}
-            {success && <p className="text-green-600 text-center">{success}</p>}
-            {errorMsg && <p className="text-red-600 text-center">{errorMsg}</p>}
+           
 
             {/* Redirect to Login */}
             <p className="text-center text-gray-600 mt-4">

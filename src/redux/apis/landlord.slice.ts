@@ -21,7 +21,7 @@ export const landlordApi = baseApi.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Product", id }],
     }),
 
-    createListing: builder.mutation<void, { data: any }>({
+    createListing: builder.mutation<void, { data: TProduct }>({
       query: ({ data }) => ({
         url: "/landlords/listings",
         method: "POST",

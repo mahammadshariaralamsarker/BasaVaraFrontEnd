@@ -18,19 +18,9 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Home, Building2, ClipboardList, Settings, LogOut, User, ChevronDown } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
+import { Building2, Home, ClipboardList, Settings } from "lucide-react"
 import Link from "next/link" 
+import { ProfileMenu } from "@/components/shared/CommonProfile"
 
 export default function DashboardLayout({
   children,
@@ -38,21 +28,14 @@ export default function DashboardLayout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname()
-  const { toast } = useToast()
-  const [mounted, setMounted] = useState(false) 
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
     setMounted(true)
   }, [])
 
   if (!mounted) {
     return null
-  }
-
-  const handleLogout = () => {
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    })
   }
 
   const navigation = [
@@ -134,37 +117,7 @@ export default function DashboardLayout({
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter className="border-t p-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start px-2">
-                  <Avatar className="h-6 w-6 mr-2">
-                    <AvatarImage src="/placeholder.svg" alt="User" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <span>My Profile</span>
-                  <ChevronDown className="ml-auto h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">  
-                <DropdownMenuItem asChild>
-                  <Link href="/landlord/profile" className="flex cursor-pointer items-center">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/landlord/settings" className="flex cursor-pointer items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="flex cursor-pointer items-center text-red-500">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <ProfileMenu />
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
