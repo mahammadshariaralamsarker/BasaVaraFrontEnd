@@ -34,10 +34,10 @@ export default function RentalHouseDetails() {
     ],
   };
 
-  const handleChange = (e) =>
+  const handleChange = (e: { target: { name: string; value: string; }; }) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Rental Request Submitted:', form);
     setShowModal(false);

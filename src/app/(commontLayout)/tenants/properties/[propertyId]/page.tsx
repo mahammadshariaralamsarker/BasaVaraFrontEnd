@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import {
-  useGetSingleListingQuery,
+  useGetSingleListingTenantQuery,
   useSubmitRentalRequestMutation,
 } from "@/redux/apis/tenant.slice";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,15 +23,17 @@ import { Input } from "@/components/ui/input";
 import { Bed, Bath, SquareIcon as SquareFeet, MapPin } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import LoadingPage from "@/app/loading";
 
 export default function PropertyDetail() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<{ moveInDate: string; message: string }>();
   const { propertyId } = useParams();
-  const { data, isLoading, isError } = useGetSingleListingQuery(propertyId);
+  const { data, isLoading, isError } = useGetSingleListingTenantQuery(propertyId);
+
   const [activeImage, setActiveImage] = useState(0);
   const [requestModalOpen, setRequestModalOpen] = useState(false);
   const [requestSent, setRequestSent] = useState(false);
@@ -39,7 +41,7 @@ export default function PropertyDetail() {
   const [submitRentalRequest, { isLoading: isSubmitting }] =
     useSubmitRentalRequestMutation();
 
-  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
+  if (isLoading) return <p className="text-center mt-10"><LoadingPage/></p>;
   if (isError || !data?.data)
     return (
       <p className="text-center mt-10 text-red-500">Error loading property.</p>
@@ -203,31 +205,6 @@ export default function PropertyDetail() {
               Request Rental
             </Button>
           )}
-
-          {/* Rental Button
-          {rentalResponse?.houseStatus === "rented" ? (
-            <Button disabled className="w-full mt-4 bg-gray-400">
-              Already Rented
-            </Button>
-          ) : requestSent ? (
-            <Button disabled className="w-full mt-4 bg-gray-400">
-              Request Sent
-            </Button>
-          ) : (
-            <Button
-              onClick={() => setRequestModalOpen(true)}
-              className="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white"
-            >
-              Request Rental
-            </Button>
-          )}
-
-          {/* Payment Option */}
-          {/* {rentalResponse?.rentalStatus === "Approved" && (
-            <Button className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white">
-              Proceed to Payment
-            </Button>
-          )} */}
         </CardContent>
       </Card>
 

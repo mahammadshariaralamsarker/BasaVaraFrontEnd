@@ -36,9 +36,8 @@ export const landlordApi = baseApi.injectEndpoints({
       }),
       providesTags: (result, error, id) => [{ type: "Product", id }],
     }),
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    createListing: builder.mutation<void, { data: any }>({
+ 
+    createListing: builder.mutation<void, { data: TProduct }>({
       query: ({ data }) => ({
         url: "/landlords/listings",
         method: "POST",
@@ -47,7 +46,7 @@ export const landlordApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
 
-    changePassword: builder.mutation<void, { data: any }>({
+    changePassword: builder.mutation<void, { data: { oldPassword: string; newPassword: string } }>({
       query: ({ data }) => ({
         url: "/auth/change-password",
         method: "POST",
@@ -55,11 +54,11 @@ export const landlordApi = baseApi.injectEndpoints({
       }),
     }),
 
-    updateListing: builder.mutation<void, { data: any }>({
-      query: ({ payload }) => ({
-        url: `/landlords/listings/${payload?.id}`,
+    updateListing: builder.mutation<void, { data: Partial<TProduct> & { id: string } }>({
+      query: ({ data }) => ({
+        url: `/landlords/listings/${data.id}`,
         method: "PATCH",
-        body: payload?.data,
+        body: data,
       }),
       invalidatesTags: ["Product"],
     }),
@@ -91,7 +90,7 @@ export const landlordApi = baseApi.injectEndpoints({
       providesTags: ["Product"],
     }),
 
-    respondToRequest: builder.mutation<void, { requestId: string; data: any }>({
+    respondToRequest: builder.mutation<void, { requestId: string; data: { status: string; message?: string } }>({
       query: ({ requestId, data }) => ({
         url: `/landlords/requests/${requestId}`,
         method: "PUT",
@@ -100,11 +99,11 @@ export const landlordApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
 
-    updateProfile: builder.mutation<void, { data: any }>({
-      query: ({ payload }) => ({
-        url: `/user/${payload?.id}`,
+    updateProfile: builder.mutation<void, { data: { id: string; name: string; email: string; [key: string]: unknown } }>({
+      query: ({ data }) => ({
+        url: `/user/${data.id}`,
         method: "PUT",
-        body: payload?.data,
+        body: data,
       }),
       invalidatesTags: ["Product"],
     }),

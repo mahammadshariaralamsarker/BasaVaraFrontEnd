@@ -4,7 +4,7 @@ import { baseApi } from "./baseApi";
 
 export const tenantApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllListings: builder.query({
+    getAllListingTenant: builder.query({
       query: () => ({
         url: "/landlords/listings",
         method: "GET",
@@ -12,7 +12,7 @@ export const tenantApi = baseApi.injectEndpoints({
       providesTags: ["Listings"],
     }),
 
-    getSingleListing: builder.query({
+    getSingleListingTenant: builder.query({
       query: (id) => ({
         url: `/landlords/listings/${id}`,
         method: "GET",
@@ -73,8 +73,8 @@ export const tenantApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetAllListingsQuery,
-  useGetSingleListingQuery,
+  useGetAllListingTenantQuery,
+  useGetSingleListingTenantQuery,
   useSubmitRentalRequestMutation,
   useGetMyRequestsQuery,
   useUpdateProfileMutation,
