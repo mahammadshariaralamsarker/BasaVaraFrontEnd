@@ -18,7 +18,7 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Building2, Home, ClipboardList, Settings } from "lucide-react"
+import { Building2, Home, ClipboardList, Settings, User } from "lucide-react"
 import Link from "next/link" 
 import { ProfileMenu } from "@/components/shared/CommonProfile"
 
@@ -61,9 +61,9 @@ export default function DashboardLayout({
 
   const settings = [
     {
-      title: "Settings",
-      icon: Settings,
-      href: "/landlord/settings",
+      title: "Profile",
+      icon: User ,
+      href: "/landlord/profile",
       isActive: pathname.startsWith("/landlord/settings"),
     },
   ]
