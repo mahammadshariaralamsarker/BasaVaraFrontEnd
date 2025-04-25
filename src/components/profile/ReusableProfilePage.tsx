@@ -55,18 +55,9 @@ export default function ReusableProfilePage({
   showAccountTab = true,
   children,
 }: ReusableProfilePageProps) {
-  const [profileImage, setProfileImage] = useState<string>("/placeholder.svg");
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setProfileImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+
+ 
   const formatDate = (isoDate: string): string => {
     const date = new Date(isoDate);
     const options: Intl.DateTimeFormatOptions = {
@@ -88,12 +79,12 @@ export default function ReusableProfilePage({
         <ProfileSidebar profileInfo={profileInfo} />
 
         <div className="md:col-span-2">
-          <Tabs defaultValue="general" className="w-full">
+          <Tabs defaultValue="account" className="w-full">
             <TabsList>
-              <TabsTrigger value="general">General</TabsTrigger>
               {showAccountTab && (
                 <TabsTrigger value="account">Account</TabsTrigger>
                           )}
+              <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="password">Password</TabsTrigger>
               {children}
             </TabsList>

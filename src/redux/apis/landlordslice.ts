@@ -13,9 +13,25 @@ export const landlordApi = baseApi.injectEndpoints({
       providesTags: ["Product"],
     }),
 
+    getOwnListings: builder.query<TProduct[], void>({
+      query: () => ({
+        url: "/landlords/my-postings",
+        method: "GET",
+      }),
+      providesTags: ["Product"],
+    }),
+
     getSingleListing: builder.query<TProduct, string>({
       query: (id) => ({
         url: `/landlords/listings/${id}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "Product", id }],
+    }),
+
+    getSingleUser: builder.query<TProduct, string>({
+      query: (id) => ({
+        url: `/user/${id}`,
         method: "GET",
       }),
       providesTags: (result, error, id) => [{ type: "Product", id }],
@@ -31,14 +47,31 @@ export const landlordApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
 
-    updateListing: builder.mutation<void, { id: string; data: FormData }>({
-      query: ({ id, data }) => ({
-        url: `/landlords/listings/${id}`,
-        method: "PUT",
+    changePassword: builder.mutation<void, { data: any }>({
+      query: ({ data }) => ({
+        url: "/auth/change-password",
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Product", id }],
     }),
+
+    updateListing: builder.mutation<void, { data: any }>({
+      query: ({ payload }) => ({
+        url: `/landlords/listings/${payload?.id}`,
+        method: "PATCH",
+        body: payload?.data,
+      }),
+      invalidatesTags: ["Product"],
+    }),
+
+    // updateListing: builder.mutation<void, { id: string; data: FormData }>({
+    //   query: ({ id, data }) => ({
+        
+    //     method: "PUT",
+    //     body: data,
+    //   }),
+    //   invalidatesTags: (result, error, { id }) => [{ type: "Product", id }],
+    // }),
 
     deleteListing: builder.mutation<void, string>({
       query: (id) => ({
@@ -47,6 +80,8 @@ export const landlordApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Product"],
     }),
+
+    
 
     getMyPostings: builder.query<TProduct[], void>({
       query: () => ({
@@ -61,6 +96,15 @@ export const landlordApi = baseApi.injectEndpoints({
         url: `/landlords/requests/${requestId}`,
         method: "PUT",
         body: data,
+      }),
+      invalidatesTags: ["Product"],
+    }),
+
+    updateProfile: builder.mutation<void, { data: any }>({
+      query: ({ payload }) => ({
+        url: `/user/${payload?.id}`,
+        method: "PUT",
+        body: payload?.data,
       }),
       invalidatesTags: ["Product"],
     }),
@@ -85,4 +129,8 @@ export const {
   useGetMyPostingsQuery,
   useRespondToRequestMutation,
   useGetRentalRequestsQuery,
+  useGetOwnListingsQuery,
+  useGetSingleUserQuery,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
 } = landlordApi;
