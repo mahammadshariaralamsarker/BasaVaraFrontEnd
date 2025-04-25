@@ -20,7 +20,7 @@ const AdminSidebar = () => {
             `}
           >
             <FaHome className="h-5 w-5" />
-            <span>All Landlord</span>
+            <span>All Listings</span>
           </Link>
         </li>
         <li>

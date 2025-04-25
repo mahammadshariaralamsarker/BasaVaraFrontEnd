@@ -16,10 +16,10 @@ export default function DashboardLayout({
     <RoleGuard allowedRole="tenant">
       <div className="min-h-screen my-2">
         <div className="flex min-h-screen  ">
-          <div className="w-2/5">
+          <div className="w-1/5">
             <TenantSidebar />
           </div>
-          <div className="w-full bg-slate-100 rounded-xl ml-2">{children}</div>
+          <div className="w-4/5 bg-slate-100 rounded-xl ml-2">{children}</div>
         </div>
       </div>
     </RoleGuard>

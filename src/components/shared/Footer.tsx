@@ -2,7 +2,7 @@ import { Mail, Phone, Facebook, Twitter, Instagram } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-10 px-6">
+    <footer className="bg-gray-900 text-white py-10 px-6 z-50">
       <div className="w-[90%] max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Contact Info */}
         <div>

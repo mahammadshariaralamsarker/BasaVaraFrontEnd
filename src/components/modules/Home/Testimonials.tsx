@@ -26,47 +26,50 @@ export default function Testimonials() {
   ];
 
   return (
-    <section className="w-full bg-gray-100 px-6 py-32">
-      <div className="w-[90%] max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Testimonials */}
-        <div>
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">
-            What Our <span className="text-teal-500">Users Say</span>
-          </h2>
-          <div className="space-y-8">
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className="bg-white p-6 rounded-lg shadow-md flex items-start gap-4"
-              >
-                <Image
-                  src={t.image}
-                  alt={t.name}
-                  width={600}
-                  height={480}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
-                <div>
-                  <p className="italic text-gray-700">“{t.quote}”</p>
-                  <p className="mt-2 font-semibold text-gray-900">{t.name}</p>
-                  <p className="text-sm text-gray-500">{t.title}</p>
+    <section className="py-16 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="lg:flex lg:items-center lg:justify-between">
+          {/* Testimonials Section */}
+          <div className="lg:w-1/2 mb-10 lg:mb-0">
+            <h2 className="text-3xl font-extrabold text-gray-800 sm:text-4xl lg:text-5xl mb-6">
+              What Our <span className="text-teal-500">Users Say</span>
+            </h2>
+            <div className="space-y-6">
+              {testimonials.map((t, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-lg shadow-md p-6 flex items-start"
+                >
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
+                    <Image
+                      src={t.image}
+                      alt={t.name}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </div>
+                  <div>
+                    <p className="italic text-gray-700 mb-2">“{t.quote}”</p>
+                    <p className="font-semibold text-gray-900">{t.name}</p>
+                    <p className="text-sm text-gray-500">{t.title}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Renting Tips */}
-        <div>
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">
-            Tips for Finding the{' '}
-            <span className="text-teal-500">Right Rental</span>
-          </h2>
-          <ul className="list-disc pl-6 space-y-4 text-gray-700">
-            {tips.map((tip, i) => (
-              <li key={i}>{tip}</li>
-            ))}
-          </ul>
+          {/* Renting Tips Section */}
+          <div className="lg:w-1/2 px-5">
+            <h2 className="text-3xl font-extrabold text-gray-800 sm:text-4xl lg:text-5xl mb-6">
+              Tips for Finding the{' '}
+              <span className="text-teal-500">Right Rental</span>
+            </h2>
+            <ul className="list-disc pl-6 space-y-4 text-gray-700">
+              {tips.map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>

@@ -38,7 +38,7 @@ export function ProfileMenu() {
     localStorage.removeItem("token");
     router.push("/login");
     toast.success("Logged out successfully!",  {
-      position: "top-center",
+      position: "top-right",
     }); 
   };
    

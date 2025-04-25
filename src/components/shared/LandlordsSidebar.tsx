@@ -5,7 +5,6 @@ const LandlordsSidebar = () => {
   return (
     <div className="bg-slate-100 min-h-screen p-4 rounded-xl">
       <ul className="space-y-4">
-       
         <li>
           <Link
             href="/landlords/listings "

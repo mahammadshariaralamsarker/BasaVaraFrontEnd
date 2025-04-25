@@ -97,8 +97,7 @@ const Navbar = () => {
         <Link
           href="/"
           className="ml-4 text-xl font-semibold text-gray-800 hover:text-gray-600"
-        >
-          NextAuth
+        > 
         </Link>
       </div>
 

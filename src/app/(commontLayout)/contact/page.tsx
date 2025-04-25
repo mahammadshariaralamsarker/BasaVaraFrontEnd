@@ -37,7 +37,7 @@ const ContactUsPage = () => {
             <div>
               <label className="block text-gray-600 font-medium">Message</label>
               <textarea
-                rows="4"
+                rows={4}
                 className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Your message..."
               ></textarea>
@@ -54,7 +54,7 @@ const ContactUsPage = () => {
         {/* Image - Two Thirds */}
         <div className="w-full md:w-2/3">
           <Image
-            src="https://pixabay.com/get/g19780ea5ca436bb04a30247819478dff194533e93ed0052090245134dfa64e01e04db1cc88b0a8f20621b1dcd66946c4b18ce99d21063c72fee939c2f25ac9beeff450979d4a4868e96060e5b91bb295_640.jpg"
+            src="https://img.freepik.com/free-photo/house-isolated-field_1303-23773.jpg?t=st=1745597332~exp=1745600932~hmac=d1b4130c20524f4566d99502de931a6d690e206a52314e7bb39b725998db552d&w=996"
             alt="Contact Us"
             width={640}
             height={480}

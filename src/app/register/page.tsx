@@ -53,7 +53,7 @@ const RegisterPage = () => {
       }
 
       toast("Registration successful! Please login to continue", {
-        position: "top-center",
+        position: "top-right",
       });
       setTimeout(() => {
         router.push("/login");
@@ -62,7 +62,7 @@ const RegisterPage = () => {
       logout();
     } catch (err: any) {
       toast.error(err.message, {
-        position: "top-center",
+        position: "top-right",
         autoClose: 5000,
       });
     }
