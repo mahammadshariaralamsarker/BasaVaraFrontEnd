@@ -1,12 +1,13 @@
-import React from "react";
-import NewsPage from "./news/page";
-import FaqPage from "./faq/page";
+import Testimonials from '@/components/modules/Home/Testimonials';
+import HeroSection from '@/components/shared/Hero';
+import HomeSlider from '@/components/shared/Slider';
 
 export default function page() {
   return (
     <div>
-      <NewsPage />
-      <FaqPage />
+      <HomeSlider />
+      <HeroSection />
+      <Testimonials />
     </div>
   );
 }
