@@ -6,6 +6,18 @@ import {
   useGetAllListingsQuery,
 } from "@/redux/apis/admin.slice";
 import Image from "next/image";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllListingsQuery({});
@@ -21,15 +33,11 @@ export default function Page() {
     );
   if (!data?.data?.length)
     return <div className="text-center py-8">No listings available</div>;
-  console.log(data.data);
+
   const handleDeleteListing = (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this Landlord?"
-    );
-    if (confirmDelete) {
-      deleteByAdmin(id);
-    }
+    deleteByAdmin(id);
   };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
@@ -93,12 +101,31 @@ export default function Page() {
                   <div className="text-gray-900">{listing.bedrooms}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    className="text-red-600 hover:text-red-900"
-                    onClick={() => handleDeleteListing(listing._id)}
-                  >
-                    Delete
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="text-red-600 hover:text-red-900">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete this
+                          property listing from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={() => handleDeleteListing(listing._id)}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </td>
               </tr>
             ))}

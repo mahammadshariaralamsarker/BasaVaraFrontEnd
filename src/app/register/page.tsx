@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { logout } from "@/redux/features/auth/authSlice";
 
 // Removed duplicate UserData definition
 export type UserData = {
@@ -17,6 +18,8 @@ export type UserData = {
   confirmPassword: string;
   role: "tenant" | "landlord";
   phone: string;
+  address: string; // Added address field
+  city: string; // Added city field
 };
 const RegisterPage = () => {
   const {
@@ -25,9 +28,7 @@ const RegisterPage = () => {
     watch,
     formState: { errors },
   } = useForm<UserData>();
-
-  const [success, setSuccess] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+ 
   const router = useRouter();
   const onSubmit = async (data: UserData) => {
     const { confirmPassword, ...userData } = data;
@@ -45,27 +46,34 @@ const RegisterPage = () => {
           body: JSON.stringify(userData),
         }
       );
-
+      console.log(response);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to register user");
       }
-
-      const result = await response.json();
-      toast("Registration successful!",{position:"top-right"}); 
-      setSuccess("Registration successful!");
-      setErrorMsg("");
-      //Redirect to home page
+      
+      toast("Registration successful! Please login to continue", {
+        position: "top-center" 
+      });
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
+     
+      logout();
+     
+     
     } catch (err: any) {
-      console.error("Registration Error:", err.message);
-      setErrorMsg(err.message);
-      setSuccess("");
+      toast.error(err.message, {
+        position: "top-center",
+        autoClose: 5000,
+      });
+       
     }
   };
 
   return (
     <div className="my-10">
-      <ToastContainer   />
+      <ToastContainer autoClose={5000} position="top-center" />
       <h1 className="text-center text-4xl font-bold mb-5">
         Register <span className="text-teal-500">Now</span>
       </h1>
@@ -175,7 +183,7 @@ const RegisterPage = () => {
                 placeholder="Address"
                 className="w-full p-3 border border-gray-300 rounded"
               />
-              {errors.address && (
+              {errors?.address && (
                 <p className="text-red-500 text-sm">{errors.address.message}</p>
               )}
             </div>
@@ -245,9 +253,7 @@ const RegisterPage = () => {
               </button>
             </div>
 
-            {/* Messages */}
-            {success && <p className="text-green-600 text-center">{success}</p>}
-            {errorMsg && <p className="text-red-600 text-center">{errorMsg}</p>}
+           
 
             {/* Redirect to Login */}
             <p className="text-center text-gray-600 mt-4">

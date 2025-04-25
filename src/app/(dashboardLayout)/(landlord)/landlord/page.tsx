@@ -63,7 +63,7 @@ export default function DashboardPage() {
       <Tabs defaultValue="properties" className="w-full">
         <TabsList>
           <TabsTrigger value="properties">Recent Properties</TabsTrigger>
-          <TabsTrigger value="requests">Pending Requests</TabsTrigger>
+          {/* <TabsTrigger value="requests">Pending Requests</TabsTrigger> */}
         </TabsList>
         <TabsContent value="properties" className="mt-4">
           <Suspense fallback={<PropertyListSkeleton />}>

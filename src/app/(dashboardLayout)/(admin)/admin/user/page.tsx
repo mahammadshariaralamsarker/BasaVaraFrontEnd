@@ -6,18 +6,25 @@ import {
   useGetAllUsersQuery,
 } from "@/redux/apis/admin.slice";
 import LoadingPage from "@/app/loading";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
   const { data, isLoading, error } = useGetAllUsersQuery({});
   const [deleteByAdmin] = useDeleteUserByAdminMutation();
+
   const handleDeleteUser = (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-    if (confirmDelete) {
-      console.log("Delete user with ID:", id);
-      deleteByAdmin(id);
-    }
+    deleteByAdmin(id);
   };
 
   if (isLoading)
@@ -89,15 +96,35 @@ export default function Page() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
-                        console.log("User ID:", user._id); // ✅ this logs the ID
-                        handleDeleteUser(user._id);
-                      }}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="text-red-600 hover:text-red-900 hover:bg-red-50"
+                        >
+                          Delete
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure you want to delete this user?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the user account
+                            and all associated data from our servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => handleDeleteUser(user._id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Delete User
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </td>
               </tr>

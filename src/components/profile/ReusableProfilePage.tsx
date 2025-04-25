@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+ 
 import {
   Card,
   CardContent,
@@ -9,10 +8,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator"; 
 import { Calendar, Shield, User } from "lucide-react";
 import { z } from "zod";
+import { UseFormReturn } from "react-hook-form";
 
 import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import ProfileForm, {
@@ -38,9 +37,9 @@ type ReusableProfilePageProps = {
   profileInfo: ProfileInfo;
   onSubmit: (values: z.infer<typeof profileFormSchema>) => void;
   isSubmitting: boolean;
-    showAccountTab?: boolean;
-    passForm?: any; // for passing form to parent component
-    handlePasswordSubmit?: (values: any) => void; // for password form submission
+  showAccountTab?: boolean;
+  passForm: UseFormReturn<{ currentPassword: string; newPassword: string; confirmPassword: string; }>
+  handlePasswordSubmit?: (values: { currentPassword: string; newPassword: string }) => void; // for password form submission
   children?: React.ReactNode; // for adding custom tabs
 };
 
@@ -49,24 +48,12 @@ export default function ReusableProfilePage({
   subtitle = "Manage your personal and professional information",
   profileInfo,
   onSubmit,
-    isSubmitting,
-    passForm,
-    handlePasswordSubmit,
+  isSubmitting,
+  passForm,
+  handlePasswordSubmit,
   showAccountTab = true,
   children,
 }: ReusableProfilePageProps) {
-  const [profileImage, setProfileImage] = useState<string>("/placeholder.svg");
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setProfileImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
   const formatDate = (isoDate: string): string => {
     const date = new Date(isoDate);
     const options: Intl.DateTimeFormatOptions = {
@@ -78,7 +65,7 @@ export default function ReusableProfilePage({
   };
   const { name, createdAt, role } = profileInfo;
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
         <p className="text-muted-foreground">{subtitle}</p>
@@ -88,13 +75,13 @@ export default function ReusableProfilePage({
         <ProfileSidebar profileInfo={profileInfo} />
 
         <div className="md:col-span-2">
-          <Tabs defaultValue="general" className="w-full">
+          <Tabs defaultValue="account" className="w-full">
             <TabsList>
-              <TabsTrigger value="general">General</TabsTrigger>
               {showAccountTab && (
                 <TabsTrigger value="account">Account</TabsTrigger>
-                          )}
-                <TabsTrigger value="password">Password</TabsTrigger>
+              )}
+              <TabsTrigger value="general">General</TabsTrigger>
+              <TabsTrigger value="password">Password</TabsTrigger>
               {children}
             </TabsList>
 
@@ -178,11 +165,14 @@ export default function ReusableProfilePage({
                   </CardContent>
                 </Card>
               </TabsContent>
-                      )}
-                      
-                      <TabsContent value="password" className="mt-4">
-  <PasswordForm passForm={passForm} handlePasswordSubmit={handlePasswordSubmit} />
-</TabsContent>
+            )}
+
+            <TabsContent value="password" className="mt-4">
+              <PasswordForm
+                passForm={passForm}
+                handlePasswordSubmit={handlePasswordSubmit}
+              />
+            </TabsContent>
           </Tabs>
         </div>
       </div>

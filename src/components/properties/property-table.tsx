@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { useMemo } from "react"
-import { useGetAllListingsQuery } from "@/redux/apis/landlord.slice"
+import { useGetOwnListingsQuery } from "@/redux/apis/landlordslice"
 
 
 
@@ -31,7 +31,7 @@ export default function PropertyTable({
   searchQuery = "",
   filters = { status: "", minPrice: 0, maxPrice: 5000, bedrooms: "", bathrooms: "" },
 }: PropertyTableProps) {
-  const { data, isLoading, error } = useGetAllListingsQuery();
+ const { data, isLoading, error } = useGetOwnListingsQuery();
   const properties = useMemo(() => (data ? data.data : []), [data]);
   console.log(properties);
  

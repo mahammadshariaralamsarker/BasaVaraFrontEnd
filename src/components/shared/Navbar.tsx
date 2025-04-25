@@ -5,18 +5,27 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/auth/authSlice";
 import { baseApi } from "@/redux/apis/baseApi";
+import { RootState } from "@/redux/store";
+import { toast, ToastContainer } from "react-toastify";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
-  const user = useSelector((state) => state.auth.user);
+   
+  interface User {
+    role?: string;
+    email?: string;
+  }
 
-  const handleLogout = async () => {
+  const user = useSelector<RootState, User | null>((state) => state.auth.user);
+
+const handleLogout = async () => {
     dispatch(logout());
     dispatch(baseApi.util.resetApiState());
     localStorage.removeItem("token");
     router.push("/login");
+    toast.success("Logged out successfully!");
   };
 
   const dashboard = () => {
@@ -43,9 +52,10 @@ const Navbar = () => {
       </li>
       <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
-      </li>
-      <li onClick={dashboard} className={navClass("/dashboard*")}>
-        Dashboard
+      </li> 
+      <li onClick={dashboard} className={navClass("/dashboard")}>
+        
+        <Link href="/dashboard">Dashboard</Link>
       </li>
     </>
   );
@@ -53,6 +63,7 @@ const Navbar = () => {
   return (
     <div className="w-[90%] mx-auto flex items-center justify-between bg-white border-b py-4">
       {/* Logo & Mobile Menu */}
+      <ToastContainer />
       <div className="flex items-center">
         <div className="relative lg:hidden">
           <div

@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bed, Bath, SquareIcon as SquareFeet } from "lucide-react";
-import { useGetAllListingsQuery } from "@/redux/apis/tenant.slice";
+import { Bed, Bath, SquareIcon as SquareFeet } from "lucide-react"; 
 import { IProduct } from "@/lib/types/product";
 import LoadingPage from "@/app/loading";
+import { useGetAllListingTenantQuery } from "@/redux/apis/tenant.slice";
 
 export const Properties = ({ limit }: { limit?: number }) => {
-  const { data, isLoading, isError } = useGetAllListingsQuery(undefined);
+  const { data, isLoading, isError } = useGetAllListingTenantQuery(undefined);
 
   if (isLoading) return <LoadingPage/>;
   if (isError || !data?.data) return <p>Failed to load listings.</p>;
