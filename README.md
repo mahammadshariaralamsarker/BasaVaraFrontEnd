@@ -67,7 +67,6 @@ Create `.env` files
 #### Example `.env` for Client:
 ```
 NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_STRIPE_PUBLIC_KEY=your_stripe_public
 ```
 
 ### 4. Run the Application
