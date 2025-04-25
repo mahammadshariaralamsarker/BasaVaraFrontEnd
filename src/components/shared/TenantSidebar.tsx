@@ -25,7 +25,7 @@ const TenantSidebar = () => {
   ];
 
   return (
-    <div className="bg-slate-50 h-full p-4 w-64 border-r border-slate-200 flex flex-col">
+    <div className="bg-slate-50 w-full h-full p-4  border-r border-slate-200 flex flex-col rounded-md ">
       {/* Header Section */}
       <div className="mb-4">
         <h2 className="text-xl font-semibold text-slate-800">Tenant Portal</h2>

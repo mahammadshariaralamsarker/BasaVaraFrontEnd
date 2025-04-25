@@ -8,7 +8,6 @@ import {
 } from "@/redux/apis/tenant.slice";
 import { useSearchParams } from "next/navigation";
 
-
 const PaymentVerificationPage = () => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order_id");
@@ -49,94 +48,58 @@ const PaymentVerificationPage = () => {
   const getVerificationMessage = () => {
     const status = verificationData?.data?.bank_status;
 
-    if (status === "Success") {
-      return (
-        <div className="mb-10 border border-green-200 bg-green-50 p-6 rounded-2xl shadow-sm">
-          <h2 className="text-xl font-semibold text-green-800 mb-3">
-            ✅ Payment Verified Successfully!
-          </h2>
-          <TransactionDetails data={verificationData.data} />
-        </div>
-      );
-    } else if (status === "Cancel") {
-      return (
-        <div className="mb-10 border border-yellow-200 bg-yellow-50 p-6 rounded-2xl shadow-sm">
-          <h2 className="text-xl font-semibold text-yellow-800 mb-3">
-            ⚠️ Payment Cancelled
-          </h2>
-          <TransactionDetails data={verificationData.data} />
-        </div>
-      );
-    } else if (status === "Failed") {
-      return (
-        <div className="mb-10 border border-red-200 bg-red-50 p-6 rounded-2xl shadow-sm">
-          <h2 className="text-xl font-semibold text-red-800 mb-3">
-            ❌ Payment Failed
-          </h2>
-          <TransactionDetails data={verificationData.data} />
-        </div>
-      );
-    }
+    const messageStyle = {
+      Success: "bg-green-50 border-green-200 text-green-800",
+      Cancel: "bg-yellow-50 border-yellow-200 text-yellow-800",
+      Failed: "bg-red-50 border-red-200 text-red-800",
+    }[status] || "bg-gray-50 border-gray-200 text-gray-800";
 
-    return null;
+    const icon = {
+      Success: "✅",
+      Cancel: "⚠️",
+      Failed: "❌",
+    }[status];
+
+    return (
+      <div className={`mb-10 border p-6 rounded-2xl shadow-sm ${messageStyle}`}>
+        <h2 className="text-xl font-semibold mb-3">
+          {icon} Payment {status}
+        </h2>
+        <TransactionDetails data={verificationData.data} />
+      </div>
+    );
   };
 
   const TransactionDetails = ({ data }: { data: any }) => (
     <div className="text-sm text-gray-800 space-y-1">
-      <p>
-        <strong>Cardholder:</strong> {data.card_holder_name}
-      </p>
-      <p>
-        <strong>Email:</strong> {data.email}
-      </p>
-      <p>
-        <strong>Transaction ID:</strong> {data.order_id}
-      </p>
-      <p>
-        <strong>Amount Paid:</strong> ${data.payable_amount}
-      </p>
-      <p>
-        <strong>Method:</strong> {data.method}
-      </p>
-      <p>
-        <strong>Bank Status:</strong> {data.bank_status}
-      </p>
-      <p>
-        <strong>Paid At:</strong>{" "}
-        {data.date_time ? new Date(data.date_time).toLocaleString() : "N/A"}
-      </p>
+      <p><strong>Cardholder:</strong> {data.card_holder_name}</p>
+      <p><strong>Email:</strong> {data.email}</p>
+      <p><strong>Transaction ID:</strong> {data.order_id}</p>
+      <p><strong>Amount Paid:</strong> ${data.payable_amount}</p>
+      <p><strong>Method:</strong> {data.method}</p>
+      <p><strong>Bank Status:</strong> {data.bank_status}</p>
+      <p><strong>Paid At:</strong> {data.date_time ? new Date(data.date_time).toLocaleString() : "N/A"}</p>
     </div>
   );
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Your Payments</h1>
+    <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-gray-900">Your Payments</h1>
 
       {orderId ? (
-        <div className="mb-10 bg-blue-50 p-6 rounded-xl border border-blue-200 shadow-sm">
-          <h2 className="text-xl font-semibold mb-3 text-blue-700">
-            Payment Verification
-          </h2>
-          {isVerifying && <p>Verifying your payment...</p>}
-          {verifyError && (
-            <p className="text-red-500">
-              Something went wrong during verification.
-            </p>
-          )}
-          {verificationData &&
-            verificationData?.data &&
-            getVerificationMessage()}
+        <div className="mb-10">
+          <h2 className="text-xl font-semibold mb-4 text-blue-800">Payment Verification</h2>
+          {isVerifying && <p className="text-sm text-gray-500">Verifying your payment...</p>}
+          {verifyError && <p className="text-sm text-red-500">Something went wrong during verification.</p>}
+          {verificationData?.data && getVerificationMessage()}
         </div>
       ) : (
-        <p className="text-gray-500 italic">
-          No payment was attempted. Please try again.
-        </p>
+        <p className="text-gray-500 italic mb-6">No payment was attempted. Please try again.</p>
       )}
 
       <div>
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-          Previous Orders
-        </h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Previous Orders</h2>
+
         {isOrdersLoading && <p>Loading your rental history...</p>}
         {ordersError && <p className="text-red-500">Error fetching orders.</p>}
 
@@ -149,19 +112,13 @@ const PaymentVerificationPage = () => {
               return (
                 <div
                   key={order._id}
-                  className="flex justify-between items-center bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition"
+                  className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white border border-gray-200 p-5 rounded-2xl shadow-sm hover:shadow-md transition gap-4"
                 >
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                      {order.product?.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-2">
-                      {order.product?.location}
-                    </p>
-                    <p className="text-sm text-gray-700 mb-1">
-                      <strong>Rent:</strong> ${order.amount}
-                    </p>
-                    <p className="text-sm text-gray-700 mb-1">
+                  <div className="flex-1 space-y-1">
+                    <h3 className="text-lg font-semibold text-gray-900">{order.product?.title}</h3>
+                    <p className="text-sm text-gray-600">{order.product?.location}</p>
+                    <p className="text-sm"><strong>Rent:</strong> ${order.amount}</p>
+                    <p className="text-sm">
                       <strong>Status:</strong>{" "}
                       <span
                         className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -175,27 +132,17 @@ const PaymentVerificationPage = () => {
                         {order.status}
                       </span>
                     </p>
-                    <p className="text-sm text-gray-700 mb-1">
-                      <strong>Paid at:</strong>{" "}
-                      {new Date(order.updatedAt).toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-700">
-                      <strong>Transaction ID:</strong> {order.transaction?.id}
-                    </p>
-                    <p className="text-sm text-gray-700">
-                      <strong>Method:</strong> {order.transaction?.method}
-                    </p>
-                    <p className="text-sm text-gray-700">
-                      <strong>Bank Status:</strong>{" "}
-                      {order.transaction?.bank_status}
-                    </p>
+                    <p className="text-sm"><strong>Paid at:</strong> {new Date(order.updatedAt).toLocaleString()}</p>
+                    <p className="text-sm"><strong>Transaction ID:</strong> {order.transaction?.id}</p>
+                    <p className="text-sm"><strong>Method:</strong> {order.transaction?.method}</p>
+                    <p className="text-sm"><strong>Bank Status:</strong> {order.transaction?.bank_status}</p>
                   </div>
 
-                  {order.status !== "Paid" && (
+                  {!isPaid && (
                     <button
                       onClick={() => handleRetryPayment(order)}
                       disabled={isPaying}
-                      className="bg-gray-900 hover:bg-gray-700 text-white font-semibold px-5 py-2 rounded-lg"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {order.status === "Cancelled"
                         ? "Retry Payment"
