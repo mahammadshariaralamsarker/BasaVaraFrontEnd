@@ -1,10 +1,10 @@
 "use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -12,13 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -29,61 +22,76 @@ import {
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { formSchema } from "@/lib/constants";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import ImageUploader from "@/components/ui/core/ImageUploader";
-import { use, useState } from "react";
 import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
-import { useUpdateListingByAdminMutation } from "@/redux/apis/admin.slice";
- 
-export default function Page({ params }: { params: { id: string } }) {
-  const [updateListingByAdmin] = useUpdateListingByAdminMutation();
-  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
-  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
- 
-  console.log({params});
-  const { id } = use(params);
-  console.log(id);
+import {
+  useGetSingleListingQuery,
+  useUpdateListingMutation,
+} from "@/redux/apis/landlordslice";
+import { useEffect, useState } from "react";
+
+export default function Page() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
+
+  const [updateListing] = useUpdateListingMutation();
+
+
+  const { data, isLoading, isError } = useGetSingleListingQuery(id);
 
   const form = useForm({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       location: "",
-      price: 0,
-      status: "available",
-      rent: 0,
-      bedrooms: 0,
-      bathrooms: 0,
-      area: 0,
+      rent: "",
+      bedrooms: "",
+      bathrooms: "",
+      area: "",
       description: "",
     },
   });
 
-  const onSubmit = (values) => {
-    console.log(values);
-    const formData = new FormData();
-    const stringifiedValues = Object.fromEntries(
-      Object.entries(values).map(([key, value]) => [key, String(value)])
-    );
+  useEffect(() => {
+    if (data?.data) {
+      form.reset(data.data);
+    }
+  }, [data, form]);
 
-    formData.append("data", JSON.stringify(stringifiedValues));
-    imageFiles.forEach((file) => {
-      formData.append("images", file);
-    });
+  const onSubmit = async (values: any) => {
+    try {
+      console.log("Submitted values:", values); // ✅ For debugging
+      const formData = new FormData();
+      const stringifiedValues = Object.fromEntries(
+        Object.entries(values)
+          .filter(([key]) => key !== "imageUrls")
+          .map(([key, value]) => [key, String(value)])
+      );
 
-    // updateListingByAdmin({ id, data: formData });
-    router.push("/admin/listing");
+      formData.append("data", JSON.stringify(stringifiedValues));
+
+
+
+      console.log('data from up',values);
+      await updateListing({
+        payload: {
+          id, // make sure this is available in your component
+          data: formData,
+        },
+      }).unwrap();
+      router.push("/landlord/properties");
+    } catch (error) {
+      console.error("Failed to update listing:", error);
+    }
   };
 
   return (
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>Property Update </CardTitle>
-          <CardDescription>
-            Update the details of your property.
-          </CardDescription>
+          <CardTitle>Property Update</CardTitle>
+          <CardDescription>Update the details of your property.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -102,6 +110,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="location"
@@ -115,15 +124,16 @@ export default function Page({ params }: { params: { id: string } }) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="rent"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Monthly Rent ($)</FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
+                          type="text"
                           placeholder="1500"
                           {...field}
                           onChange={(e) =>
@@ -135,31 +145,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Available">Available</SelectItem>
-                          <SelectItem value="Rented">Rented</SelectItem>
-                          <SelectItem value="Pending">Pending</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="bedrooms"
@@ -180,6 +166,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="bathrooms"
@@ -201,6 +188,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="area"
@@ -221,6 +209,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     </FormItem>
                   )}
                 />
+
                 <div className="md:col-span-2">
                   <FormField
                     control={form.control}
@@ -241,24 +230,18 @@ export default function Page({ params }: { params: { id: string } }) {
                   />
                 </div>
 
-                <div className="md:col-span-2">
+                {/* <div className="md:col-span-2">
                   <FormLabel>Property Images</FormLabel>
-                  <FormDescription className="mb-2">
-                    Upload images of your property. You can upload multiple
-                    images.
-                  </FormDescription>
-
                   <ImagePreviewer
                     setImageFiles={setImageFiles}
                     imagePreview={imagePreview}
                     setImagePreview={setImagePreview}
                   />
-
                   <ImageUploader
                     setImageFiles={setImageFiles}
                     setImagePreview={setImagePreview}
                   />
-                </div>
+                </div> */}
               </div>
 
               <CardFooter className="flex justify-end gap-2 px-0">

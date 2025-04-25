@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bed, Bath, SquareIcon as SquareFeet } from "lucide-react"
 
-import { useGetAllListingsQuery } from "@/redux/apis/landlord.slice"
+import { useGetOwnListingsQuery } from "@/redux/apis/landlordslice"
 
 
 
@@ -26,7 +26,7 @@ export default function PropertyGrid({
   searchQuery = "",
   filters = { status: "", minPrice: 0, maxPrice: 5000, bedrooms: "", bathrooms: "" },
 }: PropertyGridProps) {
-  const { data, isLoading, error } = useGetAllListingsQuery();
+  const { data, isLoading, error } = useGetOwnListingsQuery();
    const properties = useMemo(() => (data ? data.data : []), [data]);
    console.log(properties);
 
