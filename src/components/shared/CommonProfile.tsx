@@ -61,10 +61,10 @@ export function ProfileMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href={`/${user?.role}/settings`} className="flex cursor-pointer items-center">
+          {/* <Link href={`/${user?.role}/settings`} className="flex cursor-pointer items-center">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
-          </Link>
+          </Link> */}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
