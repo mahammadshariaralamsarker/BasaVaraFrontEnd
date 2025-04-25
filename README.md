@@ -74,6 +74,7 @@ Create `.env` files
 #### Example `.env` for Client:
 ```
 NEXT_PUBLIC_API_URL=http://localhost:5000
+JWT_SECRET= add-a-jwt-secrate-here
 ```
 
 ### 4. Run the Application
