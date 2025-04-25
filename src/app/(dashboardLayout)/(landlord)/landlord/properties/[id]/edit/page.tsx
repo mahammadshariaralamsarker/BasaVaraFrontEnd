@@ -56,6 +56,7 @@ export default function Page() {
     }
   }, [data, form]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (values: any) => {
     try {
       console.log("Submitted values:", values); // ✅ For debugging
