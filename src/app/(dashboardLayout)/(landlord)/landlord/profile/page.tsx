@@ -3,22 +3,35 @@
 import ReusableProfilePage from "@/components/profile/ReusableProfilePage"
 import { z } from "zod"
 import { profileFormSchema } from "@/components/profile/ProfileForm"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useSelector } from "react-redux"
+import { useChangePasswordMutation, useGetSingleUserQuery, useUpdateProfileMutation } from "@/redux/apis/landlordslice"
+import { useRouter } from "next/navigation"
+import { useDispatch } from "react-redux"
+import { logout } from "@/redux/features/auth/authSlice"
+import { baseApi } from "@/redux/apis/baseApi"
 
 export default function ProfilePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [profileInfo, setProfileInfo] = useState({
-    name: "Farhan",
-    email: "landlord1@gmail.com",
-    role: "landlord",
-    phone: "01623967146",
-    address: "Muradpur",
-    city: "Chottogram",
-    bio:"I am a landlord",
-    createdAt: "2025-04-21T09:34:26.324+00:00",
-    updatedAt: "2025-04-21T09:34:26.324+00:00",
   })
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const userId = user?.id;
+  const { data } = useGetSingleUserQuery(userId);
+  const [UpdateProfile] = useUpdateProfileMutation();
+  const [ChangePassword] = useChangePasswordMutation();
+  console.log(userId);
+  console.log(data);
+
+  useEffect(() => {
+    
+    if (data?.data) {
+      setProfileInfo(data?.data);
+    }
+  }, [data])
+  const router = useRouter();
 
   const form = useForm({
       defaultValues: {
@@ -29,20 +42,33 @@ export default function ProfilePage() {
     })
   
 
-  const handleSubmit = (values: z.infer<typeof profileFormSchema>) => {
+  const  handleSubmit = async(values: z.infer<typeof profileFormSchema>) => {
     setIsSubmitting(true)
-    setTimeout(() => {
-      console.log(values)
-      setIsSubmitting(false)
-    }, 1500)
+    await UpdateProfile({
+      payload: {
+        id:userId, // make sure this is available in your component
+        data: values,
+      },
+    }).unwrap();
   }
 
-  const handlePasswordSubmit = (values: any) => { 
+  const handlePasswordSubmit = async(values: { currentPassword: string; newPassword: string; }) => { 
     setIsSubmitting(true)
-    setTimeout(() => {
-      console.log(values)
-      setIsSubmitting(false)
-    }, 1500)
+    const res = await ChangePassword({
+      data: {
+        oldPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      },
+    }).unwrap();
+
+    console.log(res);
+    if (res?.status) {
+      // Clear user session or token here if applicable
+      dispatch(logout());
+      dispatch(baseApi.util.resetApiState());
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
   }
 
   return (
