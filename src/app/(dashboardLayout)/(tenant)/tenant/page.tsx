@@ -2,7 +2,7 @@
 const Tenantpage = () => {
   return (
     <div>
-      <h1>This is Admin</h1>
+      <h1>This is Tenant</h1>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import RoleGuard from "@/components/auth/RoleGuard";
 import TenantSidebar from "@/components/shared/TenantSidebar";
 import type { Metadata } from "next";
 
@@ -12,13 +13,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen my-2">
-      <div className="flex justify-between">
-        <div className="w-[20%]">
-          <TenantSidebar />
+    <RoleGuard allowedRole="tenant">
+      <div className="min-h-screen my-2">
+        <div className="flex justify-between">
+          <div className="w-[20%]">
+            <TenantSidebar />
+          </div>
+          <div className="w-[80%] bg-slate-100 rounded-xl ml-2">{children}</div>
         </div>
-        <div className="w-[80%] bg-slate-100 rounded-xl ml-2">{children}</div>
       </div>
-    </div>
+    </RoleGuard>
   );
 }
