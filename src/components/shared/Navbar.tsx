@@ -5,12 +5,19 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/auth/authSlice";
 import { baseApi } from "@/redux/apis/baseApi";
+import { RootState } from "@/redux/store";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
-  const user = useSelector((state) => state.auth.user);
+   
+  interface User {
+    role?: string;
+    email?: string;
+  }
+
+  const user = useSelector((state: RootState) => state.auth.user) as User;
 
   const handleLogout = async () => {
     dispatch(logout());
@@ -44,8 +51,9 @@ const Navbar = () => {
       <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
       </li> 
-      <li onClick={dashboard} className={navClass("/dashboard*")}>
-        Dashboard
+      <li onClick={dashboard} className={navClass("/dashboard")}>
+        
+        <Link href="/dashboard">Dashboard</Link>
       </li>
     </>
   );

@@ -39,7 +39,7 @@ import ImageUploader from "@/components/ui/core/ImageUploader";
 import { useCreateListingMutation } from "@/redux/apis/landlordslice";
 
 export default function Page() {
-  const [createListing] = useCreateListingMutation();
+  const [createListing, { isLoading }] = useCreateListingMutation();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function Page() {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: Record<string, any>) => {
     try {
       const formData = new FormData();
       const stringifiedValues = Object.fromEntries(
@@ -298,7 +298,9 @@ export default function Page() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Submit</Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Submitting..." : "Submit"}
+                </Button>
               </CardFooter>
             </form>
           </Form>

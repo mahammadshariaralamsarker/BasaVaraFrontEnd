@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Home, Building2, ClipboardList, Settings, LogOut, User, ChevronDown } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import Link from "next/link"
+import Link from "next/link" 
 
 export default function DashboardLayout({
   children,
@@ -39,8 +39,7 @@ export default function DashboardLayout({
 }>) {
   const pathname = usePathname()
   const { toast } = useToast()
-  const [mounted, setMounted] = useState(false)
-
+  const [mounted, setMounted] = useState(false) 
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -142,13 +141,11 @@ export default function DashboardLayout({
                     <AvatarImage src="/placeholder.svg" alt="User" />
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
-                  <span>John Doe</span>
+                  <span>My Profile</span>
                   <ChevronDown className="ml-auto h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent align="end" className="w-56">  
                 <DropdownMenuItem asChild>
                   <Link href="/landlord/profile" className="flex cursor-pointer items-center">
                     <User className="mr-2 h-4 w-4" />

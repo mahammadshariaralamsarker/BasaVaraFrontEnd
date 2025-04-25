@@ -40,7 +40,6 @@ const LoginPage = () => {
       const decoded = verifyToken(token) as JwtPayload & { role: string };
       localStorage.setItem("token", token);
       dispatch(setUser({ user: decoded, token }));
-
       if (res?.status) {
         toast.success(res?.message || "Login successful!", {
           position: "top-center",
@@ -60,9 +59,7 @@ const LoginPage = () => {
 
   return (
     <div className="my-10 w-[90%] mx-auto">
-      <ToastContainer
-        position="top-center"  
-      />
+      <ToastContainer position="top-center" autoClose={1000} />
       <h1 className="text-center text-4xl mb-5 font-bold">
         Login <span className="text-teal-500">Here</span>
       </h1>
