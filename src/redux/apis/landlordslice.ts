@@ -1,4 +1,4 @@
-// src/redux/api/landlordApi.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TProduct } from "@/lib/types/user";
 import { baseApi } from "./baseApi";
 
@@ -36,8 +36,9 @@ export const landlordApi = baseApi.injectEndpoints({
       }),
       providesTags: (result, error, id) => [{ type: "Product", id }],
     }),
- 
-    createListing: builder.mutation<void, { data: TProduct }>({
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createListing: builder.mutation<void, { data: any }>({
       query: ({ data }) => ({
         url: "/landlords/listings",
         method: "POST",
@@ -46,7 +47,7 @@ export const landlordApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
 
-    changePassword: builder.mutation<void, { data: { oldPassword: string; newPassword: string } }>({
+    changePassword: builder.mutation<void, { data: any }>({
       query: ({ data }) => ({
         url: "/auth/change-password",
         method: "POST",
@@ -54,18 +55,18 @@ export const landlordApi = baseApi.injectEndpoints({
       }),
     }),
 
-    updateListing: builder.mutation<void, { data: Partial<TProduct> & { id: string } }>({
-      query: ({ data }) => ({
-        url: `/landlords/listings/${data.id}`,
+    updateListing: builder.mutation<void, { data: any }>({
+      query: ({ payload }) => ({
+        url: `/landlords/listings/${payload?.id}`,
         method: "PATCH",
-        body: data,
+        body: payload?.data,
       }),
       invalidatesTags: ["Product"],
     }),
 
     // updateListing: builder.mutation<void, { id: string; data: FormData }>({
     //   query: ({ id, data }) => ({
-        
+
     //     method: "PUT",
     //     body: data,
     //   }),
@@ -80,8 +81,6 @@ export const landlordApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
 
-    
-
     getMyPostings: builder.query<TProduct[], void>({
       query: () => ({
         url: "/landlords/my-postings",
@@ -90,7 +89,7 @@ export const landlordApi = baseApi.injectEndpoints({
       providesTags: ["Product"],
     }),
 
-    respondToRequest: builder.mutation<void, { requestId: string; data: { status: string; message?: string } }>({
+    respondToRequest: builder.mutation<void, { requestId: string; data: any }>({
       query: ({ requestId, data }) => ({
         url: `/landlords/requests/${requestId}`,
         method: "PUT",
@@ -99,11 +98,11 @@ export const landlordApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
 
-    updateProfile: builder.mutation<void, { data: { id: string; name: string; email: string; [key: string]: unknown } }>({
-      query: ({ data }) => ({
-        url: `/user/${data.id}`,
+    updateProfile: builder.mutation<void, { data: any }>({
+      query: ({ payload }) => ({
+        url: `/user/${payload?.id}`,
         method: "PUT",
-        body: data,
+        body: payload?.data,
       }),
       invalidatesTags: ["Product"],
     }),

@@ -1,4 +1,4 @@
-// import Sidebar from "@/components/shared/Sidebar";
+import RoleGuard from "@/components/auth/RoleGuard";
 import AdminSidebar from "@/components/shared/AdminSidebar";
 import type { Metadata } from "next";
 
@@ -9,17 +9,19 @@ export const metadata: Metadata = {
 
 export default function DashboardLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <div className="min-h-screen my-2">
-      <div className="flex justify-between">
-        <div className="w-[20%]">
-          <AdminSidebar />
+    <RoleGuard allowedRole="admin">
+      <div className="min-h-screen my-2">
+        <div className="flex justify-between">
+          <div className="w-[20%]">
+            <AdminSidebar />
+          </div>
+          <div className="w-[80%] bg-slate-100 rounded-xl ml-2">{children}</div>
         </div>
-        <div className="w-[80%] bg-slate-100 rounded-xl ml-2">{children}</div>
       </div>
-    </div>
+    </RoleGuard>
   );
 }

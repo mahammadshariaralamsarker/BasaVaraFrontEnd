@@ -21,9 +21,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Bed, Bath, SquareIcon as SquareFeet, MapPin } from "lucide-react";
-import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import LoadingPage from "@/app/loading";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function PropertyDetail() {
   const {
@@ -32,16 +33,25 @@ export default function PropertyDetail() {
     formState: { errors },
   } = useForm<{ moveInDate: string; message: string }>();
   const { propertyId } = useParams();
-  const { data, isLoading, isError } = useGetSingleListingTenantQuery(propertyId);
+  const { data, isLoading, isError } =
+    useGetSingleListingTenantQuery(propertyId);
 
   const [activeImage, setActiveImage] = useState(0);
   const [requestModalOpen, setRequestModalOpen] = useState(false);
   const [requestSent, setRequestSent] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user = useSelector((state: any) => state.auth.user);
+
   const [submitRentalRequest, { isLoading: isSubmitting }] =
     useSubmitRentalRequestMutation();
 
-  if (isLoading) return <p className="text-center mt-10"><LoadingPage/></p>;
+  if (isLoading)
+    return (
+      <p className="text-center mt-10">
+        <LoadingPage />
+      </p>
+    );
   if (isError || !data?.data)
     return (
       <p className="text-center mt-10 text-red-500">Error loading property.</p>
@@ -59,19 +69,26 @@ export default function PropertyDetail() {
         products: propertyId,
         message: formValues.message,
       };
-      console.log(payload);
 
       const res = await submitRentalRequest(payload).unwrap();
-      console.log(res);
+
+      if (res?.success === false) {
+        toast.warning(res.message || "Something went wrong.");
+        return;
+      }
 
       setRequestSent(true);
       setRequestModalOpen(false);
       toast.success("Rental request sent!");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      toast.error("Failed to send request.");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const fallbackMessage = "Failed to send request. Please try again.";
+      const errorMessage = err?.data?.message || fallbackMessage;
+
+      toast.error(errorMessage);
     }
   };
+
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold">{property.title}</h1>
@@ -189,22 +206,23 @@ export default function PropertyDetail() {
             </div>
           </div>
 
-          {property.houseStatus === "rented" ? (
-            <Button disabled className="w-full mt-4 bg-gray-400">
-              Already Rented
-            </Button>
-          ) : requestSent ? (
-            <Button disabled className="w-full mt-4 bg-gray-400">
-              Request Sent
-            </Button>
-          ) : (
-            <Button
-              onClick={() => setRequestModalOpen(true)}
-              className="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white"
-            >
-              Request Rental
-            </Button>
-          )}
+          {user?.role === "tenant" &&
+            (property.houseStatus === "rented" ? (
+              <Button disabled className="w-full mt-4 bg-gray-400">
+                Already Rented
+              </Button>
+            ) : requestSent ? (
+              <Button disabled className="w-full mt-4 bg-gray-400">
+                Request Sent
+              </Button>
+            ) : (
+              <Button
+                onClick={() => setRequestModalOpen(true)}
+                className="w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white"
+              >
+                Request Rental
+              </Button>
+            ))}
         </CardContent>
       </Card>
 
@@ -231,10 +249,19 @@ export default function PropertyDetail() {
             <div>
               <Label>Message</Label>
               <Input
+                className="my-1"
                 type="text"
-                placeholder="Optional message to landlord"
-                {...register("message")}
+                placeholder="Message to landlord (minimum 10 words)"
+                {...register("message", {
+                  required: "Message is required",
+                  validate: (value) =>
+                    value.trim().split(/\s+/).length >= 10 ||
+                    "Message must be at least 10 words",
+                })}
               />
+              {errors.message && (
+                <p className="text-sm text-red-500">{errors.message.message}</p>
+              )}
             </div>
             <DialogFooter>
               <Button

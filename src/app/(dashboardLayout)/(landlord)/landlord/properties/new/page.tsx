@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,13 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Card,
   CardContent,
   CardDescription,
@@ -28,22 +22,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
-
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
-
-import { formSchema } from "@/lib/constants";
 import ImagePreviewer from "@/components/ui/core/ImagePreviewer";
 import ImageUploader from "@/components/ui/core/ImageUploader";
 import { useCreateListingMutation } from "@/redux/apis/landlordslice";
+import { toast } from "react-toastify";
+
+// ✅ Move schema outside component
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  location: z.string().min(1, "Location is required"),
+  price: z.number().positive("Price must be positive"),
+  rent: z.number().positive("Rent must be positive"),
+  bedrooms: z
+    .number()
+    .int()
+    .nonnegative("Bedrooms must be a non-negative integer"),
+  bathrooms: z.number().nonnegative("Bathrooms must be a non-negative number"),
+  area: z.number().positive("Area must be positive"),
+  description: z.string().min(1, "Description is required"),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export default function Page() {
   const [createListing, { isLoading }] = useCreateListingMutation();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const router = useRouter();
-  const form = useForm({
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
@@ -57,8 +66,7 @@ export default function Page() {
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = async (values: Record<string, any>) => {
+  const onSubmit = async (values: FormValues) => {
     try {
       const formData = new FormData();
       const stringifiedValues = Object.fromEntries(
@@ -69,8 +77,10 @@ export default function Page() {
       imageFiles.forEach((file) => {
         formData.append("images", file);
       });
+
       await createListing({ data: formData }).unwrap();
-      router.push("/landlord/properties"); // update to your desired path
+      toast.success("Property created successfully!");
+      router.push("/landlord/properties");
     } catch (error) {
       console.error("Failed to create listing:", error);
     }
@@ -89,6 +99,8 @@ export default function Page() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid gap-6 md:grid-cols-2">
+                {/* All form fields are unchanged below */}
+                {/* Title */}
                 <FormField
                   control={form.control}
                   name="title"
@@ -103,6 +115,7 @@ export default function Page() {
                   )}
                 />
 
+                {/* Location */}
                 <FormField
                   control={form.control}
                   name="location"
@@ -117,6 +130,7 @@ export default function Page() {
                   )}
                 />
 
+                {/* Price */}
                 <FormField
                   control={form.control}
                   name="price"
@@ -138,7 +152,7 @@ export default function Page() {
                   )}
                 />
 
-                {/* ✅ Rent Field */}
+                {/* Rent */}
                 <FormField
                   control={form.control}
                   name="rent"
@@ -160,32 +174,7 @@ export default function Page() {
                   )}
                 />
 
-                {/* <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Available">Available</SelectItem>
-                          <SelectItem value="Rented">Rented</SelectItem>
-                          <SelectItem value="Pending">Pending</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
-
+                {/* Bedrooms */}
                 <FormField
                   control={form.control}
                   name="bedrooms"
@@ -207,6 +196,7 @@ export default function Page() {
                   )}
                 />
 
+                {/* Bathrooms */}
                 <FormField
                   control={form.control}
                   name="bathrooms"
@@ -229,6 +219,7 @@ export default function Page() {
                   )}
                 />
 
+                {/* Area */}
                 <FormField
                   control={form.control}
                   name="area"
@@ -250,6 +241,7 @@ export default function Page() {
                   )}
                 />
 
+                {/* Description */}
                 <div className="md:col-span-2">
                   <FormField
                     control={form.control}
@@ -270,6 +262,7 @@ export default function Page() {
                   />
                 </div>
 
+                {/* Image Upload */}
                 <div className="md:col-span-2">
                   <FormLabel>Property Images</FormLabel>
                   <FormDescription className="mb-2">

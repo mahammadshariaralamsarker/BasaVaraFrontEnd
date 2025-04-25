@@ -12,7 +12,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
-   
+
   interface User {
     role?: string;
     email?: string;
@@ -20,7 +20,7 @@ const Navbar = () => {
 
   const user = useSelector<RootState, User | null>((state) => state.auth.user);
 
-const handleLogout = async () => {
+  const handleLogout = async () => {
     dispatch(logout());
     dispatch(baseApi.util.resetApiState());
     localStorage.removeItem("token");
@@ -52,11 +52,12 @@ const handleLogout = async () => {
       </li>
       <li className={navClass("/contact")}>
         <Link href="/contact">Contact Us</Link>
-      </li> 
-      <li onClick={dashboard} className={navClass("/dashboard")}>
-        
-        <Link href="/dashboard">Dashboard</Link>
       </li>
+      {user && (
+        <li onClick={dashboard} className={navClass("/dashboard")}>
+          <Link href="/dashboard">Dashboard</Link>
+        </li>
+      )}
     </>
   );
 

@@ -32,16 +32,6 @@ import {
   useGetSingleListingQuery,
 } from "@/redux/apis/landlordslice";
 
-// const amenitiesLabels: Record<string, string> = {
-//   parking: "Parking",
-//   pool: "Swimming Pool",
-//   gym: "Gym",
-//   security: "Security System",
-//   ac: "Air Conditioning",
-//   heating: "Heating",
-//   laundry: "Laundry",
-//   pets: "Pet Friendly",
-// };
 
 export default function PropertyDetailPage({
   params,
@@ -216,27 +206,7 @@ export default function PropertyDetailPage({
               </Card>
             </TabsContent>
 
-            {/* Amenities Tab */}
-            {/* <TabsContent value="amenities" className="mt-4">
-              <Card>
-                <CardHeader><CardTitle>Amenities</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                    {property.amenities?.map((amenity: string) => (
-                      <div key={amenity} className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-100 text-teal-600">
-                          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                            <polyline points="22 4 12 14.01 9 11.01" />
-                          </svg>
-                        </div>
-                        <span className="text-sm">{amenitiesLabels[amenity] || amenity}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent> */}
+
 
             {/* Location Tab */}
             <TabsContent value="location" className="mt-4">

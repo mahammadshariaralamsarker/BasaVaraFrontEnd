@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { logout } from "@/redux/features/auth/authSlice";
 
@@ -28,10 +27,11 @@ const RegisterPage = () => {
     watch,
     formState: { errors },
   } = useForm<UserData>();
- 
+
   const router = useRouter();
   const onSubmit = async (data: UserData) => {
-    const { confirmPassword, ...userData } = data;
+    // const { confirmPassword, ...userData } = data;
+    const { ...userData } = data;
 
     console.log(data);
 
@@ -51,23 +51,20 @@ const RegisterPage = () => {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to register user");
       }
-      
+
       toast("Registration successful! Please login to continue", {
-        position: "top-center" 
+        position: "top-center",
       });
       setTimeout(() => {
         router.push("/login");
       }, 3000);
-     
+
       logout();
-     
-     
     } catch (err: any) {
       toast.error(err.message, {
         position: "top-center",
         autoClose: 5000,
       });
-       
     }
   };
 
@@ -252,8 +249,6 @@ const RegisterPage = () => {
                 Register
               </button>
             </div>
-
-           
 
             {/* Redirect to Login */}
             <p className="text-center text-gray-600 mt-4">

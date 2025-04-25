@@ -27,6 +27,30 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  // const onSubmit = async (data: FormValues) => {
+  //   const userInfo = {
+  //     email: data.email,
+  //     password: data.password,
+  //   };
+
+  //   const res = await login(userInfo).unwrap();
+  //   const token = res.data.token;
+
+  //   // Save in localStorage for client-side access
+
+  //   const decoded = verifyToken(token) as JwtPayload & { role: string };
+  //   localStorage.setItem("token", token);
+  //   dispatch(setUser({ user: decoded, token }));
+
+  //   console.log(res);
+  //   if (res?.status) {
+  //     toast.success(res?.message);
+  //   } else {
+  //     toast.error(res?.message);
+  //   }
+  //   // toast.success("Login Successfully");
+  //   router.push(`/${decoded?.role}`);
+  // };
   const onSubmit = async (data: FormValues) => {
     const userInfo = {
       email: data.email,
