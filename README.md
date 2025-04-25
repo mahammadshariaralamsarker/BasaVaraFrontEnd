@@ -40,6 +40,13 @@
 
 ---
 
+## 📹 Project Walkthrough
+
+Check out the full video explanation of the project here:  
+**[▶️ Watch the Video](https://drive.google.com/file/d/1Z9ZoVVadFBooxwlI92hiIRqmc_BSaY_k/view?usp=sharing)**
+
+---
+
 ## 🧰 Manual Installation
 
 Follow these steps to set up PropertyPro on your local machine:
