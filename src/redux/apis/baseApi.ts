@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://basa-vara-server.vercel.app",
+    baseUrl: "http://localhost:5000",
+    // baseUrl: "https://basa-vara-server.vercel.app",
     credentials: "include",
     prepareHeaders: (headers) => {
       if (typeof window !== "undefined") {

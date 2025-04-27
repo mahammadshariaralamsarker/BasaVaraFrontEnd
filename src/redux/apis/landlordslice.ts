@@ -64,15 +64,6 @@ export const landlordApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
 
-    // updateListing: builder.mutation<void, { id: string; data: FormData }>({
-    //   query: ({ id, data }) => ({
-
-    //     method: "PUT",
-    //     body: data,
-    //   }),
-    //   invalidatesTags: (result, error, { id }) => [{ type: "Product", id }],
-    // }),
-
     deleteListing: builder.mutation<void, string>({
       query: (id) => ({
         url: `/landlords/listings/${id}`,

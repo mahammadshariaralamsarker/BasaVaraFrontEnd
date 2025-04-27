@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button" 
 import { CgProfile } from "react-icons/cg"
-import { User, Settings, LogOut, ChevronDown } from "lucide-react"
+import { User,  LogOut, ChevronDown } from "lucide-react"
 import Link from "next/link" 
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify"; 

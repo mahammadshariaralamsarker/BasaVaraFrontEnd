@@ -18,8 +18,8 @@ import { useState } from "react";
 
 export const Properties = ({ limit }: { limit?: number }) => {
   const { data, isLoading, isError } = useGetAllListingTenantQuery(undefined);
-  const [showAll, setShowAll] = useState(false);
 
+  const [showAll, setShowAll] = useState(false); 
   if (isLoading) return <LoadingPage />;
   if (isError || !data?.data) return <p>Failed to load listings.</p>;
 

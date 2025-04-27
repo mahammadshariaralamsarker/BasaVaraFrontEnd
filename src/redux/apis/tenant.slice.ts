@@ -5,8 +5,8 @@ import { baseApi } from "./baseApi";
 export const tenantApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllListingTenant: builder.query({
-      query: () => ({
-        url: "/landlords/listings",
+      query: (query) => ({
+        url: `/tenants/listings/?${query}`,
         method: "GET",
       }),
       providesTags: ["Listings"],
@@ -69,6 +69,7 @@ export const tenantApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Orders"],
     }),
+      
   }),
 });
 
@@ -81,4 +82,5 @@ export const {
   useMakePaymentMutation,
   useVerifyPaymentQuery,
   useGetMyOrdersQuery,
+   
 } = tenantApi;
