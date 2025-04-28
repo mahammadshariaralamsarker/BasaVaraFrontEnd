@@ -1,43 +1,40 @@
-'use client' 
- 
-import { useGetAllListingTenantQuery } from '@/redux/apis/tenant.slice';
+"use client";
+
+import { useGetAllListingTenantQuery } from "@/redux/apis/tenant.slice";
 // If not exported, replace with the correct hook or function name from tenant.slice
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const FilterPage = () => {
-  const [location, setLocation] = useState('update');
-  const [bedrooms, setBedrooms] = useState('');
-  const [minRent, setminRent] = useState('');
-  const [maxRent, setmaxRent] = useState('');
-  
-  const { data } = useGetAllListingTenantQuery({
+  const [location, setLocation] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [minRent, setminRent] = useState("");
+  const [maxRent, setmaxRent] = useState("");
+
+  const query = {
     location,
     bedrooms,
     minRent,
     maxRent,
+  };
+
+  const { data, refetch } = useGetAllListingTenantQuery(query, {
+    skip: !query,
   });
-  console.log(data);
-  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const query = {
-      location,
-      bedrooms,
-      minRent,maxRent
-
-    };
-    
-    // Send the query parameters to the backend or API
-    console.log('Query Parameters:', query);
-    // filterTenantQuery()
-    // Example: call an API here with the query parameters (e.g., axios)
+    if (query) {
+      refetch();
+    }
   };
-
+console.log(data);
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-6">
-      <div className="flex flex-col">
-        <label htmlFor="location" className="text-gray-700">Location:</label>
+    <form onSubmit={handleSubmit} className="space-y-4 p-6    ">
+      <div className="flex justify-between">
+      <div className=" ">
+        <label htmlFor="location" className="text-gray-700 mr-4">
+          Location:
+        </label>
         <input
           id="location"
           type="text"
@@ -48,8 +45,10 @@ const FilterPage = () => {
         />
       </div>
 
-      <div className="flex flex-col">
-        <label htmlFor="bedrooms" className="text-gray-700">Bedrooms:</label>
+      <div className="   ">
+        <label htmlFor="bedrooms" className="text-gray-700  mr-4">
+          Bedrooms:
+        </label>
         <input
           id="bedrooms"
           type="number"
@@ -59,9 +58,12 @@ const FilterPage = () => {
           placeholder="Enter number of bedrooms"
         />
       </div>
+    
 
-      <div className="flex flex-col">
-        <label htmlFor="rentGte" className="text-gray-700">Rent (Minimum):</label>
+      <div className="">
+        <label htmlFor="rentGte" className="text-gray-700  mr-4">
+          Rent (Minimum):
+        </label>
         <input
           id="rentGte"
           type="number"
@@ -72,8 +74,10 @@ const FilterPage = () => {
         />
       </div>
 
-      <div className="flex flex-col">
-        <label htmlFor="rentLte" className="text-gray-700">Rent (Maximum):</label>
+      <div className=" ">
+        <label htmlFor="rentLte" className="text-gray-700  mr-4">
+          Rent (Maximum):
+        </label>
         <input
           id="rentLte"
           type="number"
@@ -83,10 +87,11 @@ const FilterPage = () => {
           placeholder="Enter maximum rent"
         />
       </div>
-
+      
+      </div>
       <button
         type="submit"
-        className="bg-blue-500 text-white rounded-lg p-2 w-full hover:bg-blue-700 transition"
+        className="bg-blue-500 text-white rounded-lg p-2 w-1/2 hover:bg-blue-700 transition"
       >
         Search Listings
       </button>

@@ -7,7 +7,7 @@ export const tenantApi = baseApi.injectEndpoints({
     getAllListingTenant: builder.query({
       query: (query) => ({
         url: `/tenants/listings/?${query}`,
-        method: "GET",
+        method: "GET", 
       }),
       providesTags: ["Listings"],
     }),
